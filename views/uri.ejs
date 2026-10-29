@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Search result</title>
+</head>
+<body>
+
+    <form class="hstack gap-2" role="search" action="/search" method="GET">
+          <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search" required/>
+          <button class="btn-solid btn-icon theme-secondary" type="submit">
+            <svg class="bi" width="16" height="16"><use href="#search" /></svg>
+          </button>
+    </form>
+
+    <% if (error) { %>
+        
+        <div class="alert alert-danger" role="alert">
+            <p><%= error %></p>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+    <% } %>
+
+    <% if (trackArray && trackArray.length > 0) { %>
+        <h1>Search Results</h1>
+        <div class="list-group search-results">
+            <% trackArray.forEach(track => { %>
+                <a href="/page?uri=<%= encodeURIComponent(track.uri) %>" class="list-group-item list-group-item-action theme-inverse d-flex align-items-center gap-4">
+                    <% if (track.album?.images?.length) { %>
+                        <img src="<%= track.album.images[0].url %>" alt="<%= track.name %> album cover" width="100" height="100" class="rounded object-fit-cover flex-shrink-0">
+                    <% } %>
+                    <div>
+                        <h4 class="mb-1"><%= track.name %></h4>
+                        <p class="mb-0"><%= track.artists.map(artist => artist.name).join(' / ') %></p>
+                    </div>
+                </a>
+            <% }); %>
+        </div>
+    <% } %>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title><%= title %></title>
+</head>
+<body>
+    <h1><%= message %></h1>
+    <% if (status) { %>
+        
+        <div class="alert alert-<%= status.type === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+            <p><%= status.message %></p>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+    <% } %>
+
+    <form class="hstack gap-2" role="search" action="/search" method="GET">
+          <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search" required/>
+          <button class="btn-solid btn-icon theme-secondary" type="submit">
+            <svg class="bi" width="16" height="16"><use href="#search" /></svg>
+          </button>
+    </form>
+
+    <button type="button" class="btn btn-outline-success" onclick="window.location.href='/login'">Spotify Login</button>
+
+     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

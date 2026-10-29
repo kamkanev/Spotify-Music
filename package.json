@@ -1,0 +1,42 @@
+{
+  "name": "spotify-music",
+  "version": "1.0.0",
+  "description": "create and extract music data",
+  "homepage": "https://github.com/kamkanev/Spotify-Music#readme",
+  "bugs": {
+    "url": "https://github.com/kamkanev/Spotify-Music/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kamkanev/Spotify-Music.git"
+  },
+  "license": "ISC",
+  "author": "Kamen Kanev",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
+    "bootstrap": "^5.3.8",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "spotify-api.js": "^9.2.5",
+    "spotify-web-api-node": "^5.0.2",
+    "vanilla-calendar-pro": "^3.4.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.6.2",
+    "nodemon": "^3.1.14",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.32",
+    "postcss-cli": "^12.0.0",
+    "sass": "^1.107.0",
+    "sirv-cli": "^3.0.1",
+    "stylelint": "^16.26.1",
+    "stylelint-config-twbs-bootstrap": "^16.1.0"
+  }
+}

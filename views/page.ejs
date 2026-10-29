@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title><%= track ? track.name : 'Track details' %></title>
+</head>
+<body>
+    <main class="container py-4">
+        <a href="/">Home</a>
+        <% if (error) { %>
+            <div class="alert alert-danger mt-3" role="alert"><%= error %></div>
+            <a href="/login">Spotify Login</a>
+        <% } %>
+        <% if (track) { %>
+            <div class="d-flex align-items-center gap-4 my-4">
+                <% if (track.album?.images?.length) { %>
+                    <img src="<%= track.album.images[0].url %>" alt="<%= track.album.name %> cover" width="200" height="200" class="rounded flex-shrink-0">
+                <% } %>
+                <div>
+                    <h1><%= track.name %></h1>
+                    <p><%= track.artists.map(artist => artist.name).join(' / ') %></p>
+                    <p>Spotify URI: <code><%= trackUri %></code></p>
+                    <a href="<%= track.external_urls?.spotify || 'https://open.spotify.com/track/' + track.id %>">Open in Spotify</a>
+                </div>
+            </div>
+            <% if (track.album) { %>
+                <h2>Album</h2>
+                <p><%= track.album.name %></p>
+                <% if (track.album.release_date) { %>
+                    <p>Released: <%= track.album.release_date %></p>
+                <% } %>
+            <% } %>
+        <% } %>
+    </main>
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
