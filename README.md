@@ -1,5 +1,9 @@
 # Spotify Music
 
+The Express app uses model, repository, service, and controller classes. See
+[the architecture guide](docs/architecture.md) and
+[the UML class diagram](docs/class-diagram.svg) for the implemented structure.
+
 Run Node.js and MySQL as two containers managed together by Docker Compose.
 This lets the application be rebuilt independently of the database, with database
 files preserved in the `mysql_data` Docker volume.

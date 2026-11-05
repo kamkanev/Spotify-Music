@@ -15,7 +15,8 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
+    "test": "node --test test/*.test.js",
+    "test:integration": "node --test test/*.integration.js",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },

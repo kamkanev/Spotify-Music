@@ -1,0 +1,152 @@
+classDiagram
+    class Track {
+        +id: Integer
+        +name: String
+        +duration_ms: Integer?
+        +image_url: String?
+        +spotify_id: String?
+        +spotify_uri: String?
+        +album_id: Integer?
+        +album_name: String?
+        +cover_url: String?
+        +album: Album?
+        +artists: Artist[]
+        +setAlbum(album)
+        +getDisplayImage()
+        +getFormattedDuration()
+        +getArtists()
+    }
+    class Album {
+        +id: Integer
+        +name: String
+        +release_date: String?
+        +image_url: String?
+        +spotify_id: String?
+        +artists: Artist[]
+        +tracks: Track[]
+        +getTracks()
+        +getArtists()
+    }
+    class Artist {
+        +id: Integer
+        +name: String
+        +artist_type: String
+        +image_url: String?
+        +spotify_id: String?
+        +tracks: Track[]
+        +albums: Album[]
+        +getTracks()
+        +getAlbums()
+    }
+    class PersonArtist {
+        +groups: GroupArtist[]
+        +getGroups()
+    }
+    class GroupArtist {
+        +members: PersonArtist[]
+        +getMembers()
+        +addMember(person)
+    }
+    class LibraryRepository {
+        +pool: MySQL Pool
+        +rows(sql, values = [])
+        +credits(items, table, column)
+        +loadTracks(condition = '', values = [], order = 't.name, t.id')
+        +findTracks()
+        +findAlbums()
+        +findArtists()
+        +findTrack(id)
+        +findAlbum(id)
+        +findArtist(id)
+        +addMembership(groupId, memberId)
+        +transaction(work)
+        +insert(connection, table, data)
+        +linkArtists(connection, table, ownerColumn, ownerId, artistIds)
+        +importArtists(connection, artists = [])
+        +importAlbum(connection, album)
+        +importTrack(connection, track, albumId)
+        +saveSpotify(album, tracks)
+        +membership(connection, groupId, memberId)
+        +saveManual(kind, data, artistIds, groupIds, memberIds, updateArtistType)
+    }
+    class LibraryService {
+        +repository: LibraryRepository
+        +spotifyClient: SpotifyClient
+        +saveTrack(uri)
+        +saveAlbum(uri)
+        +saveSpotify(uri, target)
+        +addMembership(groupId, memberId)
+        +saveManual(kind, body = )
+    }
+    class SpotifyClient {
+        +api: SpotifyWebApi
+        +refreshTimer: Timeout?
+        +isAuthenticated()
+        +resetAccessToken()
+        +createAuthorizeURL(scopes, reauthorize = false)
+        +authorize(code)
+        +logout()
+        +searchTracks(query)
+        +getTrack(id)
+        +getAlbum(id)
+        +getAlbumTracks(id, options)
+        +play(uri)
+        +pause()
+    }
+    class HomeController {
+
+        +index(req, res)
+    }
+    class LibraryController {
+        +repository: LibraryRepository
+        +service: LibraryService
+        +spotifyClient: SpotifyClient
+        +listTracks(req, res)
+        +listAlbums(req, res)
+        +listArtists(req, res)
+        +missing(res, label)
+        +showTrack(req, res)
+        +showAlbum(req, res)
+        +showArtist(req, res)
+        +readError(error, req, res)
+        +writeError(error, res)
+        +addAlbum(req, res)
+        +addTrack(req, res)
+        +addArtist(req, res)
+        +addManual(kind, req, res)
+        +addMembership(req, res)
+        +save(req, res)
+    }
+    class SpotifyController {
+        +spotifyClient: SpotifyClient
+        +login(req, res)
+        +search(req, res)
+        +play(req, res)
+        +pause(req, res)
+        +playback(action, req, res)
+        +showTrack(req, res)
+        +callback(req, res)
+        +logout(req, res)
+    }
+    class ValidationError {
+        +name: String
+        +statusCode: Integer
+
+    }
+    Artist <|-- PersonArtist
+    Artist <|-- GroupArtist
+    Error <|-- ValidationError
+    Album "0..1" o-- "0..*" Track : contains
+    Artist "0..*" -- "0..*" Track : credited on
+    Artist "0..*" -- "0..*" Album : credited on
+    GroupArtist "0..*" o-- "0..*" PersonArtist : members
+    LibraryController "1" --> "1" LibraryService : uses
+    LibraryController "1" --> "1" LibraryRepository : reads
+    LibraryController "1" --> "1" SpotifyClient : checks login
+    LibraryService "1" --> "1" LibraryRepository : persists through
+    LibraryService "1" --> "1" SpotifyClient : imports through
+    SpotifyController "1" --> "1" SpotifyClient : uses
+    LibraryRepository ..> Track : creates
+    LibraryRepository ..> Album : creates
+    LibraryRepository ..> Artist : creates through factory
+    LibraryService ..> ValidationError : throws
