@@ -1,0 +1,11 @@
+<%- include('partials/library-start') %>
+<header class="discovery-panel rounded-4 p-4 p-md-5 mb-4">
+    <p class="text-success small fw-semibold text-uppercase">Your library</p>
+    <h1 class="display-5 fw-bold">Tracks</h1>
+    <p class="text-secondary mb-0"><%= tracks.length %> saved tracks. Find a favorite and explore its details.</p>
+</header>
+<section class="bg-white rounded-4 border p-3 p-md-4">
+    <%- include('partials/track-list', {tracks}) %>
+    <% if (!tracks.length) { %><a href="/" class="btn btn-outline-success rounded-pill mt-3">Find music to save</a><% } %>
+</section>
+<%- include('partials/library-end') %>

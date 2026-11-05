@@ -8,24 +8,36 @@
     <title><%= title %></title>
 </head>
 <body>
-    <h1><%= message %></h1>
+    <%- include('partials/navigation') %>
+    <main class="container py-4 py-md-5">
     <% if (status) { %>
         
         <div class="alert alert-<%= status.type === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
-            <p><%= status.message %></p>
+            <p class="mb-0"><%= status.message %></p>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
     <% } %>
 
-    <form class="hstack gap-2" role="search" action="/search" method="GET">
-          <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search" required/>
-          <button class="btn-solid btn-icon theme-secondary" type="submit">
-            <svg class="bi" width="16" height="16"><use href="#search" /></svg>
-          </button>
-    </form>
-
-    <button type="button" class="btn btn-outline-success" onclick="window.location.href='/login'">Spotify Login</button>
+        <section class="text-center discovery-panel rounded-4 px-3 py-5 mb-4">
+            <h1 class="display-5 fw-bold mb-3">Find your kind of music.</h1>
+            <p class="text-secondary mb-4">Search for a track, explore the artists, and make yourself at home.</p>
+            <%- include('partials/search') %>
+        </section>
+        <div class="row g-3">
+            <% [{title: 'Your tracks', text: 'A home for the music you love.', button: 'Browse tracks', href: '/tracks'}, {title: 'Your albums', text: 'Explore the releases in your collection.', button: 'Browse albums', href: '/albums'}, {title: 'Your artists', text: 'Get to know the people behind your music.', button: 'Browse artists', href: '/artists'}].forEach(item => { %>
+                <div class="col-md-4">
+                    <section class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h2 class="h5 fw-bold"><%= item.title %></h2>
+                            <p class="text-secondary"><%= item.text %></p>
+                            <a href="<%= item.href %>" class="btn btn-light border rounded-pill"><%= item.button %></a>
+                        </div>
+                    </section>
+                </div>
+            <% }); %>
+        </div>
+    </main>
 
      <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>

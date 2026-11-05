@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const fs = require('fs');
+const mysql = require('mysql2/promise');
+const library = require('./lib/library');
 
 const envPath = path.join(__dirname, '.env');
 if (fs.existsSync(envPath)) {
@@ -14,6 +16,16 @@ const missingEnv = requiredEnv.filter(name => !process.env[name]?.trim());
 if (missingEnv.length) {
   throw new Error(`Missing required environment variables: ${missingEnv.join(', ')}. Set them in .env or your environment.`);
 }
+
+const db = mysql.createPool({
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER || 'music_app',
+    password: process.env.DB_PASSWORD || process.env.MYSQL_PASSWORD,
+    database: process.env.DB_NAME || 'music',
+    waitForConnections: true,
+    connectionLimit: 10
+});
 
 //spotify set up
 var SpotifyWebApi = require('spotify-web-api-node');
@@ -29,6 +41,9 @@ let refreshAccessTokenInterval;
 app.set('view engine', 'ejs');
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use('/css', express.static(path.join(__dirname, 'views/css')));
+
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 const indexData = {
     title: 'Music App',
@@ -158,17 +173,44 @@ app.get("/search", async (req, res) => {
 
 app.get("/play", (req, res) => {
     const {uri} = req.query;
+    if (typeof uri !== 'string' || !/^spotify:track:[A-Za-z0-9]{22}$/.test(uri)) {
+        return res.status(400).send('Provide a valid Spotify track URI.');
+    }
+    const returnUrl = `/page?uri=${encodeURIComponent(uri)}`;
     spotifyApi.play({uris: [uri]}).then(() => {
-        res.send("Playback started");
+        res.redirect(returnUrl);
     }).catch(err => {
-        console.error(err);
-        res.send("Error starting playback");
+        console.error('Error starting playback:', err.statusCode);
+        res.redirect(`${returnUrl}&playback=play_failed`);
+    });
+});
+
+app.get("/pause", (req, res) => {
+    const {uri} = req.query;
+    if (typeof uri !== 'string' || !/^spotify:track:[A-Za-z0-9]{22}$/.test(uri)) {
+        return res.status(400).send('Provide a valid Spotify track URI.');
+    }
+    const returnUrl = `/page?uri=${encodeURIComponent(uri)}`;
+    spotifyApi.pause().then(() => {
+        res.redirect(returnUrl);
+    }).catch(err => {
+        console.error('Error pausing playback:', err.statusCode);
+        res.redirect(`${returnUrl}&playback=pause_failed`);
     });
 });
 
 app.get("/page", async (req, res) => {
     const {uri} = req.query;
-    const sendData = {error: null, track: null, trackUri: null};
+    const sendData = {error: null, track: null, trackUri: null, saveStatus: null};
+    if (req.query.saved === 'track') sendData.saveStatus = 'Track, album, and credited artists saved to your library.';
+    if (req.query.saved === 'album') sendData.saveStatus = 'Album, its tracks, and credited artists saved to your library.';
+    if (req.query.saved === 'failed') sendData.error = 'Could not save to your library. Please try again.';
+    if (req.query.saved === 'login') sendData.error = 'Please log in to Spotify before saving.';
+    if (req.query.playback === 'play_failed') {
+        sendData.error = 'Could not start playback. Open Spotify on a device and try again.';
+    } else if (req.query.playback === 'pause_failed') {
+        sendData.error = 'Could not pause playback. Open Spotify on a device and try again.';
+    }
     if (typeof uri !== 'string' || !/^spotify:track:[A-Za-z0-9]{22}$/.test(uri)) {
         sendData.error = 'Provide a valid Spotify track URI.';
         return res.status(400).render('page', sendData);
@@ -200,6 +242,67 @@ app.get("/logout", (req, res) => {
     spotifyApi.resetAccessToken();
     spotifyApi.resetRefreshToken();
     res.type('text').send('Local Spotify tokens cleared. This does not sign you out of spotify.com. Sign in again at /login?reauthorize=1.');
+});
+
+// Database-backed library lists and individual record pages.
+require('./lib/library-routes')(app, db);
+
+// Manual JSON endpoints use database IDs to connect existing records.
+for (const [path, table] of [['/add-album', 'albums'], ['/add-track', 'tracks'], ['/add-artist', 'artists']]) {
+    app.post(path, async (req, res) => {
+        try {
+            const result = await library.saveManual(db, table, req.body);
+            return res.status(201).json(result);
+        } catch (error) {
+            console.error('Library save failed:', error.code || error.message);
+            const status = error.statusCode || (error.code === 'ER_NO_REFERENCED_ROW_2' ? 400 : 500);
+            return res.status(status).json({error: status === 400 ? error.statusCode ? error.message : 'Referenced album or artist does not exist.' : 'Could not save to your library.'});
+        }
+    });
+}
+
+app.post('/add-membership', async (req, res) => {
+    try {
+        const groupId = library.ids([req.body?.group_id], 'group_id')[0];
+        const memberId = library.ids([req.body?.member_id], 'member_id')[0];
+        await library.transaction(db, connection => library.membership(connection, groupId, memberId));
+        return res.status(201).json({group_id: groupId, member_id: memberId});
+    } catch (error) {
+        console.error('Membership save failed:', error.code || error.message);
+        return res.status(error.statusCode || 500).json({error: error.statusCode ? error.message : 'Could not save membership.'});
+    }
+});
+
+app.post('/save-spotify', async (req, res) => {
+    const {uri, target} = req.body || {};
+    if (typeof uri !== 'string' || !/^spotify:track:[A-Za-z0-9]{22}$/.test(uri) || !['track', 'album'].includes(target)) {
+        return res.status(400).send('Provide a valid track URI and a track or album target.');
+    }
+    const returnUrl = `/page?uri=${encodeURIComponent(uri)}`;
+    if (!spotifyApi.getAccessToken()) return res.redirect(303, `${returnUrl}&saved=login`);
+    try {
+        // Fetch metadata server-side, rather than trusting hidden form metadata.
+        const {body: track} = await spotifyApi.getTrack(uri.split(':')[2]);
+        const {body: album} = await spotifyApi.getAlbum(track.album.id);
+        const tracks = target === 'track' ? [track] : [...album.tracks.items];
+        if (target === 'album') {
+            let offset = tracks.length;
+            let next = album.tracks.next;
+            while (next) {
+                const {body: page} = await spotifyApi.getAlbumTracks(album.id, {limit: 50, offset});
+                if (!page.items.length) throw new Error('Incomplete album track response.');
+                tracks.push(...page.items);
+                offset += page.items.length;
+                next = page.next;
+            }
+        }
+        await library.saveSpotify(db, album, tracks);
+        return res.redirect(303, `${returnUrl}&saved=${target}`);
+    } catch (error) {
+        console.error('Spotify library import failed:', error.code || error.statusCode || error.message);
+        if (error.statusCode === 401) spotifyApi.resetAccessToken();
+        return res.redirect(303, `${returnUrl}&saved=${error.statusCode === 401 ? 'login' : 'failed'}`);
+    }
 });
 
 

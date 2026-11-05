@@ -1,0 +1,9 @@
+<%- include('partials/library-start') %>
+<header class="discovery-panel rounded-4 p-4 p-md-5 mb-4">
+    <p class="text-success small fw-semibold text-uppercase">Your library</p>
+    <h1 class="display-5 fw-bold">Artists</h1>
+    <p class="text-secondary mb-0"><%= artists.length %> saved artists. The people and groups behind your music.</p>
+</header>
+<%- include('partials/artist-grid', {artists}) %>
+<% if (!artists.length) { %><a href="/" class="btn btn-outline-success rounded-pill">Find music to save</a><% } %>
+<%- include('partials/library-end') %>

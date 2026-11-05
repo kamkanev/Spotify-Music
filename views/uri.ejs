@@ -9,38 +9,49 @@
 </head>
 <body>
 
-    <form class="hstack gap-2" role="search" action="/search" method="GET">
-          <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search" required/>
-          <button class="btn-solid btn-icon theme-secondary" type="submit">
-            <svg class="bi" width="16" height="16"><use href="#search" /></svg>
-          </button>
-    </form>
+    <%- include('partials/navigation') %>
+    <main class="container py-4 py-md-5">
+        <section class="text-center mb-4">
+            <p class="text-success fw-semibold small text-uppercase">Discover something good</p>
+            <h1 class="fw-bold mb-3">Find your next track.</h1>
+            <p class="text-secondary mb-4">Search again or select a track to explore its details.</p>
+            <%- include('partials/search') %>
+        </section>
+        <section class="results-panel mx-auto bg-white border rounded-4 p-3 p-md-4 shadow-sm">
 
     <% if (error) { %>
         
-        <div class="alert alert-danger" role="alert">
-            <p><%= error %></p>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <p class="mb-0"><%= error %></p>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
     <% } %>
 
     <% if (trackArray && trackArray.length > 0) { %>
-        <h1>Search Results</h1>
-        <div class="list-group search-results">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h5 fw-bold mb-0">Search results</h2>
+            <span class="badge rounded-pill text-bg-light border"><%= trackArray.length %> tracks</span>
+        </div>
+        <div class="list-group list-group-flush search-results">
             <% trackArray.forEach(track => { %>
-                <a href="/page?uri=<%= encodeURIComponent(track.uri) %>" class="list-group-item list-group-item-action theme-inverse d-flex align-items-center gap-4">
+                <a href="/page?uri=<%= encodeURIComponent(track.uri) %>" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3">
                     <% if (track.album?.images?.length) { %>
-                        <img src="<%= track.album.images[0].url %>" alt="<%= track.name %> album cover" width="100" height="100" class="rounded object-fit-cover flex-shrink-0">
+                        <img src="<%= track.album.images[0].url %>" alt="<%= track.name %> album cover" width="64" height="64" class="rounded flex-shrink-0">
+                    <% } else { %>
+                        <span class="cover-placeholder rounded flex-shrink-0 d-flex align-items-center justify-content-center text-success" aria-hidden="true">♫</span>
                     <% } %>
-                    <div>
-                        <h4 class="mb-1"><%= track.name %></h4>
-                        <p class="mb-0"><%= track.artists.map(artist => artist.name).join(' / ') %></p>
+                    <div class="track-copy">
+                        <h3 class="h6 fw-semibold mb-1"><%= track.name %></h3>
+                        <p class="small text-secondary mb-0"><%= track.artists.map(artist => artist.name).join(' / ') %></p>
                     </div>
+                    <span class="ms-auto text-secondary" aria-hidden="true">›</span>
                 </a>
             <% }); %>
         </div>
     <% } %>
+        </section>
+    </main>
 
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>

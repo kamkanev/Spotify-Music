@@ -1,0 +1,25 @@
+<%- include('partials/library-start') %>
+<a href="/albums" class="text-success text-decoration-none">‹ All albums</a>
+<section class="discovery-panel rounded-4 p-4 p-md-5 my-4">
+    <div class="row align-items-center g-4">
+        <div class="col-md-4 col-lg-3">
+            <% if (album.image_url) { %>
+                <img src="<%= album.image_url %>" alt="<%= album.name %> cover" class="track-artwork rounded-4 shadow-sm">
+            <% } else { %>
+                <div class="track-artwork bg-white rounded-4 d-flex align-items-center justify-content-center display-1 text-success" aria-hidden="true">♫</div>
+            <% } %>
+        </div>
+        <div class="col-md-8 col-lg-9 track-copy">
+            <p class="text-success small fw-semibold text-uppercase">Saved album</p>
+            <h1 class="display-5 fw-bold"><%= album.name %></h1>
+            <p class="fs-5"><%- include('partials/artist-links', {artists: album.artists}) %></p>
+            <% if (album.release_date) { %><p class="text-secondary">Released <%= album.release_date %></p><% } %>
+            <% if (album.spotify_id) { %><a href="https://open.spotify.com/album/<%= encodeURIComponent(album.spotify_id) %>" class="btn btn-outline-success rounded-pill">Open in Spotify</a><% } %>
+        </div>
+    </div>
+</section>
+<section class="bg-white rounded-4 border p-3 p-md-4">
+    <h2 class="h5 fw-bold mb-3">Saved tracks · <%= tracks.length %></h2>
+    <%- include('partials/track-list', {tracks}) %>
+</section>
+<%- include('partials/library-end') %>

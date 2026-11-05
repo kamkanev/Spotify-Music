@@ -1,0 +1,36 @@
+<%- include('partials/library-start') %>
+<a href="/tracks" class="text-success text-decoration-none">‹ All tracks</a>
+<section class="discovery-panel rounded-4 p-4 p-md-5 my-4">
+    <div class="row align-items-center g-4">
+        <div class="col-md-4 col-lg-3">
+            <% if (track.cover_url) { %>
+                <img src="<%= track.cover_url %>" alt="<%= track.name %> cover" class="track-artwork rounded-4 shadow-sm">
+            <% } else { %>
+                <div class="track-artwork bg-white rounded-4 d-flex align-items-center justify-content-center display-1 text-success" aria-hidden="true">♫</div>
+            <% } %>
+        </div>
+        <div class="col-md-8 col-lg-9 track-copy">
+            <p class="text-success small fw-semibold text-uppercase">Saved track</p>
+            <h1 class="display-5 fw-bold"><%= track.name %></h1>
+            <p class="fs-5"><%- include('partials/artist-links', {artists: track.artists}) %></p>
+            <% if (track.duration_ms != null) { %>
+                <p class="text-secondary"><%= Math.floor(track.duration_ms / 60000) %>:<%= String(Math.floor(track.duration_ms / 1000) % 60).padStart(2, '0') %></p>
+            <% } %>
+            <% if (track.spotify_uri || track.spotify_id) { %>
+                <a href="/page?uri=<%= encodeURIComponent(track.spotify_uri || 'spotify:track:' + track.spotify_id) %>" class="btn btn-success rounded-pill px-4">Open Spotify controls</a>
+            <% } %>
+        </div>
+    </div>
+</section>
+<section class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <h2 class="h5 fw-bold">Album</h2>
+        <% if (track.album_id) { %>
+            <a href="/album/<%= track.album_id %>" class="text-success"><%= track.album_name %></a>
+        <% } else { %>
+            <p class="text-secondary mb-0">This track has no linked album.</p>
+        <% } %>
+        <% if (track.spotify_uri) { %><p class="small mt-3 mb-0">Spotify URI: <code class="track-uri"><%= track.spotify_uri %></code></p><% } %>
+    </div>
+</section>
+<%- include('partials/library-end') %>

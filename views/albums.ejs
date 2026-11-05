@@ -1,0 +1,9 @@
+<%- include('partials/library-start') %>
+<header class="discovery-panel rounded-4 p-4 p-md-5 mb-4">
+    <p class="text-success small fw-semibold text-uppercase">Your library</p>
+    <h1 class="display-5 fw-bold">Albums</h1>
+    <p class="text-secondary mb-0"><%= albums.length %> saved albums. Explore the releases in your collection.</p>
+</header>
+<%- include('partials/album-grid', {albums}) %>
+<% if (!albums.length) { %><a href="/" class="btn btn-outline-success rounded-pill">Find music to save</a><% } %>
+<%- include('partials/library-end') %>

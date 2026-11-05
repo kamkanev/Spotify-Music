@@ -1,0 +1,40 @@
+<%- include('partials/library-start') %>
+<a href="/artists" class="text-success text-decoration-none">‹ All artists</a>
+<section class="discovery-panel rounded-4 p-4 p-md-5 my-4">
+    <div class="row align-items-center g-4">
+        <div class="col-md-4 col-lg-3">
+            <% if (artist.image_url) { %>
+                <img src="<%= artist.image_url %>" alt="<%= artist.name %>" class="track-artwork rounded-4 shadow-sm">
+            <% } else { %>
+                <div class="track-artwork bg-white rounded-4 d-flex align-items-center justify-content-center display-1 text-success" aria-hidden="true"><%= artist.name.charAt(0) %></div>
+            <% } %>
+        </div>
+        <div class="col-md-8 col-lg-9 track-copy">
+            <p class="text-success small fw-semibold text-uppercase">Saved artist</p>
+            <h1 class="display-5 fw-bold"><%= artist.name %></h1>
+            <p class="text-secondary text-capitalize"><%= artist.artist_type === 'unknown' || !artist.artist_type ? 'Artist' : artist.artist_type %></p>
+            <% if (artist.spotify_id) { %><a href="https://open.spotify.com/artist/<%= encodeURIComponent(artist.spotify_id) %>" class="btn btn-outline-success rounded-pill">Open in Spotify</a><% } %>
+        </div>
+    </div>
+</section>
+<section class="bg-white rounded-4 border p-3 p-md-4 mb-4">
+    <h2 class="h5 fw-bold mb-3">Credited tracks · <%= tracks.length %></h2>
+    <%- include('partials/track-list', {tracks}) %>
+</section>
+<section class="mb-4">
+    <h2 class="h5 fw-bold mb-3">Credited albums · <%= albums.length %></h2>
+    <%- include('partials/album-grid', {albums}) %>
+</section>
+<% if (members.length || artist.artist_type === 'group') { %>
+    <section class="mb-4">
+        <h2 class="h5 fw-bold mb-3">Group members</h2>
+        <%- include('partials/artist-grid', {artists: members}) %>
+    </section>
+<% } %>
+<% if (groups.length) { %>
+    <section>
+        <h2 class="h5 fw-bold mb-3">Member of</h2>
+        <%- include('partials/artist-grid', {artists: groups}) %>
+    </section>
+<% } %>
+<%- include('partials/library-end') %>

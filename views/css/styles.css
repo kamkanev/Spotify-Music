@@ -1,4 +1,56 @@
 /* Add custom styles here, after Bootstrap. */
+body {
+    background-color: #f5f7f6;
+    color: #1e3027;
+}
+
+.discovery-panel {
+    background: linear-gradient(135deg, #e5f4eb, #f0f6ed);
+}
+
+.search-form {
+    max-width: 640px;
+}
+
+.search-form input {
+    min-width: 0;
+}
+
+.results-panel {
+    max-width: 900px;
+}
+
+.cover-placeholder {
+    width: 64px;
+    height: 64px;
+    background-color: #e5f4eb;
+    font-size: 1.5rem;
+}
+
+.track-copy {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.track-artwork {
+    display: block;
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    aspect-ratio: 1;
+}
+
+.track-uri {
+    overflow-wrap: anywhere;
+}
+
+.library-cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+}
+
 .search-results {
     max-height: 65vh;
     overflow-y: auto;

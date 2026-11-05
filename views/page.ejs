@@ -8,31 +8,89 @@
     <title><%= track ? track.name : 'Track details' %></title>
 </head>
 <body>
-    <main class="container py-4">
-        <a href="/">Home</a>
+    <%- include('partials/navigation') %>
+    <main class="container py-4 py-md-5">
+        <div class="mb-4">
+            <a href="/" class="text-success text-decoration-none">‹ Back to discover</a>
+        </div>
         <% if (error) { %>
-            <div class="alert alert-danger mt-3" role="alert"><%= error %></div>
-            <a href="/login">Spotify Login</a>
+            <div class="alert alert-danger rounded-4" role="alert"><%= error %></div>
+            <% if (!track) { %>
+                <a class="btn btn-outline-success rounded-pill px-4" href="/login">Connect Spotify</a>
+            <% } %>
         <% } %>
         <% if (track) { %>
-            <div class="d-flex align-items-center gap-4 my-4">
+            <% if (saveStatus) { %>
+                <div class="alert alert-success rounded-4" role="status"><%= saveStatus %></div>
+            <% } %>
+            <section class="discovery-panel rounded-4 p-4 p-md-5 mb-4">
+            <div class="row align-items-center g-4 g-md-5">
+                <div class="col-12 col-md-4 col-lg-3">
                 <% if (track.album?.images?.length) { %>
-                    <img src="<%= track.album.images[0].url %>" alt="<%= track.album.name %> cover" width="200" height="200" class="rounded flex-shrink-0">
+                    <img src="<%= track.album.images[0].url %>" alt="<%= track.album.name %> cover" width="260" height="260" class="track-artwork rounded-4 shadow-sm">
+                <% } else { %>
+                    <div class="track-artwork rounded-4 bg-white d-flex align-items-center justify-content-center display-1 text-success" aria-label="No album cover available">♫</div>
                 <% } %>
-                <div>
-                    <h1><%= track.name %></h1>
-                    <p><%= track.artists.map(artist => artist.name).join(' / ') %></p>
-                    <p>Spotify URI: <code><%= trackUri %></code></p>
-                    <a href="<%= track.external_urls?.spotify || 'https://open.spotify.com/track/' + track.id %>">Open in Spotify</a>
+                </div>
+                <div class="col-12 col-md-8 col-lg-9 track-copy">
+                    <p class="text-success fw-semibold small text-uppercase mb-2">Track spotlight</p>
+                    <h1 class="display-5 fw-bold mb-3"><%= track.name %></h1>
+                    <p class="fs-5 text-secondary mb-3"><%= track.artists.map(artist => artist.name).join(' / ') %></p>
+                    <div class="d-flex flex-wrap align-items-center gap-2 text-secondary small">
+                        <% if (track.album) { %><span><%= track.album.name %></span><% } %>
+                        <% if (Number.isFinite(track.duration_ms)) { %>
+                            <span class="badge rounded-pill bg-white text-secondary border"><%= Math.floor(track.duration_ms / 60000) %>:<%= String(Math.floor(track.duration_ms / 1000) % 60).padStart(2, '0') %></span>
+                        <% } %>
+                        <% if (track.explicit) { %><span class="badge rounded-pill bg-white text-secondary border">Explicit</span><% } %>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mt-4">
+                        <form action="/play" method="GET">
+                            <input type="hidden" name="uri" value="<%= trackUri %>">
+                            <button type="submit" class="btn btn-success rounded-pill px-4">Play</button>
+                        </form>
+                        <form action="/pause" method="GET">
+                            <input type="hidden" name="uri" value="<%= trackUri %>">
+                            <button type="submit" class="btn btn-outline-secondary rounded-pill px-4">Stop</button>
+                        </form>
+                        <a class="btn btn-link text-success" href="<%= track.external_urls?.spotify || 'https://open.spotify.com/track/' + track.id %>">Open in Spotify</a>
+                        <form action="/save-spotify" method="POST">
+                            <input type="hidden" name="uri" value="<%= trackUri %>">
+                            <input type="hidden" name="target" value="track">
+                            <button type="submit" class="btn btn-outline-success rounded-pill px-4">Save track</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <% if (track.album) { %>
-                <h2>Album</h2>
-                <p><%= track.album.name %></p>
-                <% if (track.album.release_date) { %>
-                    <p>Released: <%= track.album.release_date %></p>
+            </section>
+            <div class="row g-3">
+                <% if (track.album) { %>
+                    <div class="col-md-6">
+                        <section class="card h-100 border-0 rounded-4 shadow-sm">
+                            <div class="card-body p-4">
+                                <p class="text-secondary small text-uppercase mb-2">From the album</p>
+                                <h2 class="h5 fw-bold"><%= track.album.name %></h2>
+                                <% if (track.album.release_date) { %>
+                                    <p class="text-secondary mb-0">Released <%= track.album.release_date %></p>
+                                <% } %>
+                                <form action="/save-spotify" method="POST" class="mt-3">
+                                    <input type="hidden" name="uri" value="<%= trackUri %>">
+                                    <input type="hidden" name="target" value="album">
+                                    <button type="submit" class="btn btn-outline-success rounded-pill">Save album and tracks</button>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
                 <% } %>
-            <% } %>
+                <div class="col-md-6">
+                    <section class="card h-100 border-0 rounded-4 shadow-sm">
+                        <div class="card-body p-4">
+                            <p class="text-secondary small text-uppercase mb-2">Track details</p>
+                            <h2 class="h5 fw-bold">Spotify URI</h2>
+                            <code class="track-uri"><%= trackUri %></code>
+                        </div>
+                    </section>
+                </div>
+            </div>
         <% } %>
     </main>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
