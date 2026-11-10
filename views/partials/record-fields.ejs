@@ -1,0 +1,49 @@
+        <div class="mb-3">
+            <label for="record-name" class="form-label">Name <span class="text-danger">*</span></label>
+            <input id="record-name" name="name" class="form-control" maxlength="255" value="<%= values.name ?? '' %>" required>
+        </div>
+        <div class="mb-3">
+            <label for="record-image" class="form-label">Image URL or local path (optional)</label>
+            <input id="record-image" name="image_url" class="form-control" maxlength="2048" value="<%= values.image_url ?? '' %>" placeholder="https://… or /uploads/…">
+        </div>
+        <% if (kind === 'albums') { %>
+            <div class="mb-3">
+                <label for="record-release" class="form-label">Release date (optional)</label>
+                <input id="record-release" name="release_date" class="form-control" maxlength="10" value="<%= values.release_date ?? '' %>" placeholder="YYYY, YYYY-MM, or YYYY-MM-DD">
+            </div>
+        <% } %>
+        <% if (kind === 'artists') { %>
+            <div class="mb-3">
+                <label for="record-type" class="form-label">Artist type (optional)</label>
+                <select id="record-type" name="artist_type" class="form-select">
+                    <% ['unknown', 'person', 'group'].forEach(type => { %>
+                        <option value="<%= type %>" <%= values.artist_type === type ? 'selected' : '' %>><%= type.charAt(0).toUpperCase() + type.slice(1) %></option>
+                    <% }); %>
+                </select>
+            </div>
+        <% } %>
+        <% if (kind === 'tracks') { %>
+            <div class="mb-3">
+                <label for="record-duration" class="form-label">Duration in milliseconds (optional)</label>
+                <input id="record-duration" type="number" name="duration_ms" class="form-control" min="0" max="2147483647" step="1" value="<%= values.duration_ms ?? '' %>">
+            </div>
+            <div class="mb-3">
+                <label for="record-album" class="form-label">Album (optional)</label>
+                <select id="record-album" name="album_id" class="form-select">
+                    <option value="">No album</option>
+                    <% albums.forEach(album => { %>
+                        <option value="<%= album.id %>" <%= String(values.album_id) === String(album.id) ? 'selected' : '' %>><%= album.name %> · #<%= album.id %></option>
+                    <% }); %>
+                </select>
+            </div>
+        <% } %>
+        <div class="mb-3">
+            <label for="record-spotify" class="form-label">Spotify ID (optional)</label>
+            <input id="record-spotify" name="spotify_id" class="form-control" maxlength="22" value="<%= values.spotify_id ?? '' %>">
+        </div>
+        <% if (kind === 'tracks') { %>
+            <div class="mb-3">
+                <label for="record-uri" class="form-label">Spotify URI (optional)</label>
+                <input id="record-uri" name="spotify_uri" class="form-control" maxlength="255" value="<%= values.spotify_uri ?? '' %>" placeholder="spotify:track:…">
+            </div>
+        <% } %>

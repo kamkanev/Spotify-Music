@@ -1,0 +1,15 @@
+<div class="d-flex flex-wrap gap-2 mt-4">
+    <a href="/<%= kind %>/<%= record.id %>/edit" class="btn btn-primary rounded-pill px-4">Edit</a>
+    <form action="/<%= kind %>/<%= record.id %>/delete" method="POST">
+        <button type="submit" class="btn btn-danger rounded-pill px-4">Delete</button>
+    </form>
+</div>
+<p class="small text-secondary mt-2 mb-0">
+    <% if (kind === 'album') { %>
+        Deleting this album keeps its tracks and artists in your library, but removes their links to this album.
+    <% } else if (kind === 'artist') { %>
+        Deleting this artist removes their credits and memberships. Tracks, albums, and other artists are kept.
+    <% } else { %>
+        Deleting this track removes its artist credits. The album and artists are kept.
+    <% } %>
+</p>

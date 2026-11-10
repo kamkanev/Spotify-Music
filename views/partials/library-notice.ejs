@@ -1,0 +1,6 @@
+<% if (notice) { %>
+    <div class="alert alert-<%= notice.type %> alert-dismissible fade show rounded-4" role="alert">
+        <%= notice.message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>

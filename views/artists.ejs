@@ -2,8 +2,17 @@
 <header class="discovery-panel rounded-4 p-4 p-md-5 mb-4">
     <p class="text-success small fw-semibold text-uppercase">Your library</p>
     <h1 class="display-5 fw-bold">Artists</h1>
-    <p class="text-secondary mb-0"><%= artists.length %> saved artists. The people and groups behind your music.</p>
+    <p class="text-secondary mb-0"><%= artists.length %> artists shown. The people and groups behind your music.</p>
 </header>
+<div class="d-flex justify-content-end mb-3">
+    <a href="/artists/new" class="btn btn-primary rounded-pill px-4">+ Add artist</a>
+</div>
+<%- include('partials/library-notice') %>
+<%- include('partials/library-filters', {kind: 'artists'}) %>
+<% if (!artists.length && (filters.q || filters.source !== 'all' || filters.type !== 'all')) { %>
+    <p class="text-secondary">No artists match your search or filters.</p>
+<% } else { %>
 <%- include('partials/artist-grid', {artists}) %>
 <% if (!artists.length) { %><a href="/" class="btn btn-outline-success rounded-pill">Find music to save</a><% } %>
+<% } %>
 <%- include('partials/library-end') %>

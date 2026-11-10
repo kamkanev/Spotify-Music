@@ -1,0 +1,41 @@
+<form action="/<%= kind %>" method="GET" class="bg-white border rounded-4 p-3 p-md-4 mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg">
+            <label for="library-query" class="form-label">Search your <%= kind %></label>
+            <input id="library-query" type="search" name="q" maxlength="255" class="form-control" placeholder="<%= kind === 'artists' ? 'Artist name' : kind === 'albums' ? 'Album or artist name' : 'Track, album, or artist name' %>" value="<%= filters.q %>">
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <label for="library-sort" class="form-label">Sort by</label>
+            <select id="library-sort" name="sort" class="form-select">
+                <% const sorts = [['name', 'Name A–Z'], ['name_desc', 'Name Z–A'], ['newest', 'Recently added']]; %>
+                <% if (kind === 'tracks') sorts.push(['duration', 'Longest first']); %>
+                <% if (kind === 'albums') sorts.push(['release', 'Latest release']); %>
+                <% sorts.forEach(([value, label]) => { %>
+                    <option value="<%= value %>" <%= filters.sort === value ? 'selected' : '' %>><%= label %></option>
+                <% }); %>
+            </select>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <label for="library-source" class="form-label">Source</label>
+            <select id="library-source" name="source" class="form-select">
+                <% [['all', 'All sources'], ['spotify', 'Spotify'], ['local', 'Other / local']].forEach(([value, label]) => { %>
+                    <option value="<%= value %>" <%= filters.source === value ? 'selected' : '' %>><%= label %></option>
+                <% }); %>
+            </select>
+        </div>
+        <% if (kind === 'artists') { %>
+            <div class="col-sm-6 col-lg-2">
+                <label for="library-type" class="form-label">Artist type</label>
+                <select id="library-type" name="type" class="form-select">
+                    <% [['all', 'All types'], ['person', 'Person'], ['group', 'Group'], ['unknown', 'Unknown']].forEach(([value, label]) => { %>
+                        <option value="<%= value %>" <%= filters.type === value ? 'selected' : '' %>><%= label %></option>
+                    <% }); %>
+                </select>
+            </div>
+        <% } %>
+        <div class="col-auto d-flex gap-2">
+            <button type="submit" class="btn btn-success">Apply</button>
+            <a href="/<%= kind %>" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </div>
+</form>

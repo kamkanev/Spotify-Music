@@ -116,3 +116,64 @@ test('controller rejects invalid IDs before querying and handles missing records
     });
     assert.equal(code, 404);
 });
+
+test('library filters normalize unsafe or unsupported sort and query values', () => {
+    const service = new LibraryService({}, {});
+    const filters = service.listOptions('tracks', {q: ' Song ', sort: 'name; DROP TABLE tracks', source: 'bad', type: 'group'});
+    assert.deepEqual(filters, {q: 'Song', sort: 'name', source: 'all', type: 'all'});
+    assert.equal(service.listOptions('artists', {type: 'group'}).type, 'group');
+    const repository = new LibraryRepository({});
+    const query = repository.browseQuery('tracks', {q: '%_!', sort: 'name; DROP TABLE tracks'});
+    assert.equal(query.order, 't.name, t.id');
+    assert.deepEqual(query.values, ['%!%!_!!%', '%!%!_!!%', '%!%!_!!%']);
+    assert.ok(!query.where.includes('DROP TABLE'));
+});
+
+test('edit validation handles blank optional fields and rejects invalid dates and values', async () => {
+    let received;
+    const service = new LibraryService({updateRecord: async (...args) => { received = args; return true; }}, {});
+    await service.updateRecord('tracks', 1, {name: 'Edited', duration_ms: '0', album_id: '', image_url: '', spotify_id: '', spotify_uri: ''});
+    assert.equal(received[2].duration_ms, 0);
+    assert.equal(received[2].album_id, null);
+    assert.equal(received[2].spotify_id, null);
+    for (const body of [{name: 'Track', duration_ms: '-1'}, {name: 'Track', album_id: '1 OR 1=1'}, {name: 'Track', image_url: 'javascript:alert(1)'}, {name: 'Track', spotify_id: 'bad'}]) {
+        await assert.rejects(service.updateRecord('tracks', 1, body), error => error.statusCode === 400);
+    }
+    await assert.rejects(service.updateRecord('albums', 1, {name: 'Album', release_date: '2026-02-30'}), /release date/);
+    await service.updateRecord('albums', 1, {name: 'Album', release_date: '2024-02-29'});
+    assert.equal(received[2].release_date, '2024-02-29');
+    await assert.rejects(service.updateRecord('artists', 1, {name: 'Artist', artist_type: 'invalid'}));
+});
+
+test('creation normalizes optional form fields and selected relationships without upserting', async () => {
+    let saved;
+    const service = new LibraryService({saveManual: async (...args) => { saved = args; return {id: 7}; }}, {});
+    assert.deepEqual(await service.createRecord('tracks', {name: 'Local song', album_id: '', duration_ms: '', spotify_id: '', spotify_uri: '', artist_ids: ['2', '3']}), {id: 7});
+    assert.equal(saved[1].album_id, null);
+    assert.equal(saved[1].spotify_id, null);
+    assert.deepEqual(saved[2].artistIds, [2, 3]);
+    assert.equal(saved[2].createOnly, true);
+    await service.createRecord('artists', {name: 'A person', artist_type: 'person', group_ids: '2'});
+    assert.deepEqual(saved[2].groupIds, [2]);
+    await assert.rejects(service.createRecord('artists', {name: 'Unknown', group_ids: '2'}), /Choose Person/);
+    await assert.rejects(service.createRecord('artists', {name: 'Person', artist_type: 'person', member_ids: '2'}), /Choose Group/);
+    await assert.rejects(service.createRecord('tracks', {name: 'Song', artist_ids: ['2 OR 1=1']}));
+});
+
+test('deletion rolls back credit cleanup if the final row delete fails', async () => {
+    const calls = [];
+    const connection = {
+        beginTransaction: async () => calls.push('begin'),
+        commit: async () => calls.push('commit'),
+        rollback: async () => calls.push('rollback'),
+        release: () => calls.push('release'),
+        execute: async sql => {
+            if (sql.startsWith('SELECT')) return [[{id: 1}]];
+            if (sql.startsWith('DELETE FROM track_artists')) { calls.push('unlink'); return [{}]; }
+            throw new Error('delete failed');
+        }
+    };
+    const repository = new LibraryRepository({getConnection: async () => connection});
+    await assert.rejects(repository.deleteRecord('tracks', 1), /delete failed/);
+    assert.deepEqual(calls, ['begin', 'unlink', 'rollback', 'release']);
+});

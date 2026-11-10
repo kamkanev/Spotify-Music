@@ -51,6 +51,10 @@ body {
     aspect-ratio: 1;
 }
 
+.edit-record-panel {
+    max-width: 760px;
+}
+
 .search-results {
     max-height: 65vh;
     overflow-y: auto;

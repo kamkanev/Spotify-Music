@@ -52,6 +52,22 @@ artist types. `SpotifyClient` wraps the external SDK and owns login tokens and
 the refresh timer; `SpotifyController` handles login, search, playback, and the
 Spotify details page. Login tokens are still shared in process memory, as before.
 
+List controllers normalize database search/sort/filter options through
+`LibraryService.listOptions()`. `LibraryRepository.browseQuery()` constructs only
+allowlisted SQL fragments and parameterizes search values. The same classes handle
+edit and delete requests: the service validates edit fields, the repository locks
+and updates the row in a transaction, and the controller renders form errors or
+redirects with an alert. Creation uses the shared `recordData()` validation and
+`createRecord()` methods, with the same fields partial used by the edit form.
+Selected artists and memberships are inserted in the creation transaction;
+duplicate Spotify identifiers are rejected for these forms.
+
+Deletes keep MySQL foreign-key constraints enabled. In one transaction the
+repository locks the selected row, removes its credit/membership rows (or clears
+tracks' album references when deleting an album), and deletes only the selected
+entity. Related tracks, albums, and artists survive. A failure rolls back both
+the reference changes and the delete.
+
 ## Inheritance and relationships
 
 - `PersonArtist extends Artist` and adds `groups` and `getGroups()`.

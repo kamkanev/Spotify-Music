@@ -46,6 +46,58 @@ available on the internal Compose network; its port is not published to the host
 
 ## Saving music
 
+### Edit, delete, and browse your library
+
+Saved track, album, and artist detail pages have **Edit** (blue) and **Delete**
+(red) controls. The edit form updates the existing row by internal database ID;
+the ID is never changed. Optional fields can be cleared, and track edits can
+select an album or no album. Artist credits and group links are preserved.
+An artist's type cannot change in a way that conflicts with existing membership.
+These changes affect this application's database, not Spotify's catalogue.
+
+Edits use `GET /track/:id/edit` and `POST /track/:id/edit` (likewise `/album`
+and `/artist`). Successful edits return to the detail page with a blue alert.
+Invalid inputs, duplicate Spotify identifiers, and missing referenced albums show
+a red alert and retain the submitted form values.
+
+Deletes use `POST /track/:id/delete` (likewise `/album` and `/artist`). A transaction
+removes links before deleting the requested record, with foreign-key checks still
+enabled:
+
+- Track deletion removes its `track_artists` rows; the album and artists remain.
+- Album deletion clears its tracks' `album_id` and removes its `album_artists`
+  rows; the tracks and artists remain.
+- Artist deletion removes its track/album credits and memberships, whether it is
+  the group or the member. Tracks, albums, and other artists remain.
+
+Any failure rolls back the whole operation and shows a red alert. Successful
+deletion returns to the list with a blue alert. No database migration is required.
+
+The **+ Add** button on each list opens `/tracks/new`, `/albums/new`, or
+`/artists/new`. Submit the form with POST to the same URL. Only the name is
+required. Blank optional fields become SQL `NULL`; artist type defaults to
+`unknown`. Track forms can select an existing album and credited artists, and
+album forms can select credited artists. Artist forms can select existing groups
+for a person, or existing people as group members. These links are saved in the
+same transaction as the new record. Duplicate Spotify IDs/URIs are rejected
+rather than overwriting an existing record. A successful create redirects to the
+new detail page with a blue alert; form errors are red and keep entered values.
+
+Each list has its own database search form, separate from Spotify search:
+
+- `/tracks?q=...` searches track, album, and credited artist names.
+- `/albums?q=...` searches album and credited artist names.
+- `/artists?q=...` searches artist names.
+- `sort=name`, `name_desc`, or `newest` work on all lists. Tracks also support
+  `duration` (longest first); albums support `release` (latest release first).
+- `source=spotify` or `local` filters by presence or absence of a Spotify ID.
+- Artist lists also accept `type=person`, `group`, or `unknown`.
+
+Searches, sorting, and filters can be combined, and Reset clears them. Search
+terms use SQL parameters and treat `%` and `_` literally. Sort columns come from
+a fixed allowlist rather than request text. `newest` means most recently added
+by internal ID, not release date.
+
 Browse saved MySQL records at `/tracks`, `/albums`, and `/artists`. Each list
 links to individual pages at `/track/:id`, `/album/:id`, and `/artist/:id`, using
 internal database IDs. These pages work without Spotify login and include links

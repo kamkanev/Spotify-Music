@@ -104,4 +104,124 @@ test('class architecture preserves SQL relationships and HTTP routes', {
     assert.equal((await request('/logout')).status, 200);
     assert.equal(access, null); assert.equal(refresh, null);
     assert.ok((await saveTrack()).headers.get('location').endsWith('saved=login'));
+
+    // Editing and browsing are database operations and work without Spotify login.
+    const list = (kind, query) => repository[`find${kind[0].toUpperCase() + kind.slice(1)}`](service.listOptions(kind, query));
+    assert.equal((await list('tracks', {q: 'Band'})).length, 2);
+    assert.equal((await list('albums', {q: 'Person'})).length, 1);
+    assert.equal((await list('tracks', {source: 'spotify'})).length, 2);
+    assert.equal((await list('tracks', {source: 'local'})).length, 2);
+    assert.equal((await list('artists', {type: 'group'})).length, 1);
+    assert.equal((await list('tracks', {q: "' OR '1'='1"})).length, 0);
+    await service.saveManual('tracks', {name: '100%_! literal'});
+    assert.equal((await list('tracks', {q: '%_!'})).length, 1);
+    const longest = await list('tracks', {sort: 'duration'});
+    assert.equal(longest[0].duration_ms, 185000);
+    const newest = await list('tracks', {sort: 'newest'});
+    assert.ok(newest[0].id > newest.at(-1).id);
+    const formPost = (path, body) => request(path, {method: 'POST', body: new URLSearchParams(body)});
+    const detailIds = {track: tracks[0].id, album: savedAlbum.id, artist: band.id};
+    for (const [kind, id] of Object.entries(detailIds)) {
+        const detail = await (await request(`/${kind}/${id}`)).text();
+        assert.ok(detail.includes(`/${kind}/${id}/edit`));
+        assert.ok(detail.includes(`/${kind}/${id}/delete`));
+        assert.ok(detail.includes('btn-primary')); assert.ok(detail.includes('btn-danger'));
+        assert.equal((await request(`/${kind}/${id}/edit`)).status, 200);
+        // The schema still protects direct deletes; the application explicitly unlinks in a transaction.
+        await assert.rejects(pool.execute(`DELETE FROM ${kind}s WHERE id = ?`, [id]), error => error.code === 'ER_ROW_IS_REFERENCED_2');
+        const badEdit = await formPost(`/${kind}/${id}/edit`, {name: ''});
+        assert.equal(badEdit.status, 400); assert.ok((await badEdit.text()).includes('alert-danger'));
+        assert.equal((await request(`/${kind}/999999/edit`)).status, 404);
+        assert.equal((await formPost(`/${kind}/999999/delete`, {})).status, 404);
+        assert.equal((await formPost(`/${kind}/bad/edit`, {name:'Bad'})).status, 400);
+    }
+    const editTrack = await formPost(`/track/${tracks[0].id}/edit`, {name: 'Edited <song>', duration_ms: '200000', album_id: String(savedAlbum.id), spotify_id: trackId, spotify_uri: uri, image_url: ''});
+    assert.equal(editTrack.status, 303);
+    const editedPage = await (await request(editTrack.headers.get('location'))).text();
+    assert.ok(editedPage.includes('alert-primary')); assert.ok(editedPage.includes('Edited &lt;song&gt;'));
+    const editedTrack = await repository.findTrack(tracks[0].id);
+    assert.equal(editedTrack.duration_ms, 200000); assert.equal(editedTrack.artists.length, 1);
+    assert.equal((await formPost(`/track/${tracks[0].id}/edit`, {name:'Invalid album', album_id:'999999'})).status, 400);
+    assert.equal((await repository.findTrack(tracks[0].id)).name, 'Edited <song>');
+    const collision = await formPost(`/track/${tracks[0].id}/edit`, {name:'Duplicate', spotify_id: nextTrack.id, spotify_uri: nextTrack.uri});
+    assert.equal(collision.status, 409); assert.ok((await collision.text()).includes('already used'));
+    assert.equal((await formPost(`/album/${savedAlbum.id}/edit`, {name:'Album edited', release_date:'2026-02-30'})).status, 400);
+    assert.equal((await formPost(`/album/${savedAlbum.id}/edit`, {name:'Album edited', release_date:'2026-11', spotify_id:albumId, image_url:'/cover.jpg'})).status, 303);
+    assert.equal((await repository.findAlbum(savedAlbum.id)).getTracks().length, 2);
+    const wrongType = await formPost(`/artist/${band.id}/edit`, {name:'Band edited', artist_type:'person', spotify_id:artistId});
+    assert.equal(wrongType.status, 400); assert.ok((await wrongType.text()).includes('memberships'));
+    assert.equal((await formPost(`/artist/${band.id}/edit`, {name:'Band edited', artist_type:'group', spotify_id:artistId})).status, 303);
+    assert.equal((await repository.findArtist(band.id)).getMembers().length, 1);
+    for (const [table, kind] of [['tracks','track'], ['albums','album'], ['artists','artist']]) {
+        const {id} = await service.saveManual(table, {name:'Unreferenced '+kind});
+        const deleted = await formPost(`/${kind}/${id}/delete`, {});
+        assert.equal(deleted.status, 303); assert.equal(deleted.headers.get('location'), `/${table}?notice=deleted`);
+        assert.ok((await (await request(deleted.headers.get('location'))).text()).includes('alert-primary'));
+        assert.equal((await request(`/${kind}/${id}`)).status, 404);
+    }
+    for (const kind of ['tracks','albums','artists']) {
+        const response = await request(`/${kind}?q=nothing-matches&sort=name_desc&source=local`);
+        assert.equal(response.status, 200);
+        const html = await response.text(); assert.ok(html.includes('No '+kind+' match')); assert.ok(html.includes('value="nothing-matches"'));
+    }
+
+    // Browser creation forms, including all optional fields and relationship selection.
+    for (const kind of ['tracks', 'albums', 'artists']) {
+        assert.ok((await (await request(`/${kind}`)).text()).includes(`/${kind}/new`));
+        const form = await request(`/${kind}/new`);
+        assert.equal(form.status, 200);
+        assert.ok((await form.text()).includes('Name is required. All other fields are optional.'));
+        const invalid = await formPost(`/${kind}/new`, {name: '', image_url: '/keep-this.jpg'});
+        assert.equal(invalid.status, 400);
+        const html = await invalid.text(); assert.ok(html.includes('alert-danger')); assert.ok(html.includes('/keep-this.jpg'));
+    }
+    async function create(kind, fields) {
+        const response = await formPost(`/${kind}/new`, fields);
+        assert.equal(response.status, 303, await response.clone().text());
+        const url = response.headers.get('location');
+        assert.ok(url.endsWith('notice=created'));
+        assert.ok((await (await request(url)).text()).includes('alert-primary'));
+        return Number(url.match(/\/(\d+)\?/)[1]);
+    }
+    const newPerson = await create('artists', {name:'New person', artist_type:'person'});
+    const newGroup = await create('artists', {name:'New group', artist_type:'group', member_ids:String(newPerson)});
+    assert.equal((await repository.findArtist(newGroup)).getMembers()[0].id, newPerson);
+    const newAlbum = await create('albums', {name:'New album', release_date:'2026', artist_ids:String(newGroup)});
+    const newTrack = await create('tracks', [['name','New linked song'], ['album_id',String(newAlbum)], ['artist_ids',String(newPerson)], ['artist_ids',String(newGroup)], ['duration_ms','0'], ['spotify_id',''], ['image_url','']]);
+    assert.deepEqual((await repository.findTrack(newTrack)).artists.map(a=>a.id), [newPerson,newGroup]);
+    const secondTrack = await create('tracks', {name:'Keep this song', album_id:String(newAlbum), artist_ids:String(newGroup)});
+    const keptAlbum = await create('albums', {name:'Keep this album', artist_ids:String(newGroup)});
+    const simpleArtist = await create('artists', {name:'Name only artist'});
+    assert.equal((await repository.findArtist(simpleArtist)).artist_type, 'unknown');
+    const badLink = await formPost('/tracks/new', {name:'Must roll back create', artist_ids:'999999'});
+    assert.equal(badLink.status, 400);
+    assert.ok((await badLink.text()).includes('no longer exists'));
+    const [[noPartial]] = await pool.execute('SELECT COUNT(*) AS count FROM tracks WHERE name = ?', ['Must roll back create']);
+    assert.equal(noPartial.count, 0);
+    const duplicateCreate = await formPost('/tracks/new', {name:'Must not replace song', spotify_id:trackId, spotify_uri:uri});
+    assert.equal(duplicateCreate.status, 409);
+    assert.equal((await repository.findTrack(tracks[0].id)).name, 'Edited <song>');
+    const wrongMembership = await formPost('/artists/new', {name:'Wrong membership', artist_type:'unknown', group_ids:String(newGroup)});
+    assert.equal(wrongMembership.status, 400);
+
+    // Linked deletes remove only relationships and the requested record, retaining peers.
+    assert.equal((await formPost(`/track/${newTrack}/delete`, {})).status, 303);
+    assert.equal(await repository.findTrack(newTrack), null);
+    assert.ok(await repository.findAlbum(newAlbum)); assert.ok(await repository.findArtist(newPerson));
+    const [[trackLinks]] = await pool.execute('SELECT COUNT(*) AS count FROM track_artists WHERE track_id = ?', [newTrack]);
+    assert.equal(trackLinks.count, 0);
+    assert.equal((await formPost(`/album/${newAlbum}/delete`, {})).status, 303);
+    assert.equal(await repository.findAlbum(newAlbum), null);
+    assert.equal((await repository.findTrack(secondTrack)).album_id, null);
+    assert.ok(await repository.findArtist(newGroup));
+    assert.equal((await formPost(`/artist/${newPerson}/delete`, {})).status, 303);
+    assert.equal((await repository.findArtist(newGroup)).getMembers().length, 0);
+    assert.equal((await formPost(`/artist/${newGroup}/delete`, {})).status, 303);
+    assert.ok(await repository.findTrack(secondTrack)); assert.ok(await repository.findAlbum(keptAlbum));
+    assert.equal((await repository.findTrack(secondTrack)).artists.length, 0);
+    assert.equal((await repository.findAlbum(keptAlbum)).artists.length, 0);
+    // Deleting a group also leaves people intact.
+    const otherGroup = await create('artists', {name:'Other group', artist_type:'group', member_ids:String(person.id)});
+    assert.equal((await formPost(`/artist/${otherGroup}/delete`, {})).status, 303);
+    assert.ok(await repository.findArtist(person.id));
 });

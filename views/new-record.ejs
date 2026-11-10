@@ -1,0 +1,46 @@
+<%- include('partials/library-start') %>
+<a href="/<%= kind %>" class="text-success text-decoration-none">‹ All <%= kind %></a>
+<section class="bg-white border rounded-4 p-4 p-md-5 mt-4 mx-auto edit-record-panel">
+    <p class="text-secondary small text-uppercase">Your library</p>
+    <h1 class="h2 fw-bold mb-3">Add <%= kind.slice(0, -1) %></h1>
+    <p class="text-secondary">Name is required. All other fields are optional.</p>
+    <% if (error) { %><div class="alert alert-danger rounded-4" role="alert"><%= error %></div><% } %>
+    <form action="/<%= kind %>/new" method="POST">
+        <%- include('partials/record-fields', {kind, values, albums}) %>
+        <% if (kind !== 'artists') { %>
+            <div class="mb-3">
+                <label for="new-artists" class="form-label">Credited artists (optional)</label>
+                <select id="new-artists" name="artist_ids" multiple size="5" class="form-select" aria-describedby="artists-help">
+                    <% artists.forEach(artist => { %>
+                        <option value="<%= artist.id %>" <%= [].concat(values.artist_ids || []).map(String).includes(String(artist.id)) ? 'selected' : '' %>><%= artist.name %> · #<%= artist.id %></option>
+                    <% }); %>
+                </select>
+                <p id="artists-help" class="form-text">Select any existing artists. Use Ctrl or Command to select several, or leave empty if no artist credit is needed.</p>
+                <a href="/artists/new" class="small text-success" target="_blank" rel="noopener">Add a new artist in another tab</a>
+            </div>
+        <% } else { %>
+            <div class="mb-3">
+                <label for="new-groups" class="form-label">Member of groups (optional, for a Person)</label>
+                <select id="new-groups" name="group_ids" multiple size="4" class="form-select">
+                    <% artists.filter(artist => artist.artist_type === 'group').forEach(group => { %>
+                        <option value="<%= group.id %>" <%= [].concat(values.group_ids || []).map(String).includes(String(group.id)) ? 'selected' : '' %>><%= group.name %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="new-members" class="form-label">Group members (optional, for a Group)</label>
+                <select id="new-members" name="member_ids" multiple size="4" class="form-select">
+                    <% artists.filter(artist => artist.artist_type === 'person').forEach(person => { %>
+                        <option value="<%= person.id %>" <%= [].concat(values.member_ids || []).map(String).includes(String(person.id)) ? 'selected' : '' %>><%= person.name %></option>
+                    <% }); %>
+                </select>
+                <p class="form-text">Use Ctrl or Command to select several. Leave both membership fields empty when the artist type is Unknown.</p>
+            </div>
+        <% } %>
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary rounded-pill px-4">Add <%= kind.slice(0, -1) %></button>
+            <a href="/<%= kind %>" class="btn btn-outline-secondary rounded-pill">Cancel</a>
+        </div>
+    </form>
+</section>
+<%- include('partials/library-end') %>
