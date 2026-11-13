@@ -1,0 +1,1124 @@
+{
+  "name": "Music Room",
+  "width": 2640,
+  "height": 1380,
+  "layers": [
+    {
+      "id": "business",
+      "name": "Business layer",
+      "bounds": [
+        30,
+        130,
+        2580,
+        280
+      ]
+    },
+    {
+      "id": "application",
+      "name": "Application layer",
+      "bounds": [
+        30,
+        450,
+        2580,
+        420
+      ]
+    },
+    {
+      "id": "technology",
+      "name": "Technology layer",
+      "bounds": [
+        30,
+        910,
+        2580,
+        330
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "id": "user",
+      "layer": "business",
+      "type": "BusinessActor",
+      "typeLabel": "Business actor",
+      "name": "Music enthusiast",
+      "detail": "Person using the application",
+      "bounds": [
+        90,
+        250,
+        240,
+        86
+      ],
+      "documentation": "Music enthusiast. Person using the application"
+    },
+    {
+      "id": "curator",
+      "layer": "business",
+      "type": "BusinessRole",
+      "typeLabel": "Business role",
+      "name": "Library curator",
+      "detail": "Organize and explore music",
+      "bounds": [
+        430,
+        250,
+        240,
+        86
+      ],
+      "documentation": "Library curator. Organize and explore music"
+    },
+    {
+      "id": "manage",
+      "layer": "business",
+      "type": "BusinessProcess",
+      "typeLabel": "Business process",
+      "name": "Manage music library",
+      "detail": "Create, edit, delete, link records",
+      "bounds": [
+        850,
+        250,
+        260,
+        86
+      ],
+      "documentation": "Manage music library. Create, edit, delete, link records"
+    },
+    {
+      "id": "discover",
+      "layer": "business",
+      "type": "BusinessProcess",
+      "typeLabel": "Business process",
+      "name": "Discover music",
+      "detail": "Search catalogue and import music",
+      "bounds": [
+        1270,
+        250,
+        260,
+        86
+      ],
+      "documentation": "Discover music. Search catalogue and import music"
+    },
+    {
+      "id": "listen",
+      "layer": "business",
+      "type": "BusinessProcess",
+      "typeLabel": "Business process",
+      "name": "Control listening",
+      "detail": "Start or pause Spotify playback",
+      "bounds": [
+        1690,
+        250,
+        260,
+        86
+      ],
+      "documentation": "Control listening. Start or pause Spotify playback"
+    },
+    {
+      "id": "collection",
+      "layer": "business",
+      "type": "BusinessObject",
+      "typeLabel": "Business object",
+      "name": "Personal music collection",
+      "detail": "Tracks, albums, artists and credits",
+      "bounds": [
+        2110,
+        250,
+        360,
+        86
+      ],
+      "documentation": "Personal music collection. Tracks, albums, artists and credits"
+    },
+    {
+      "id": "ui",
+      "layer": "application",
+      "type": "ApplicationInterface",
+      "typeLabel": "Application interface",
+      "name": "Browser web UI",
+      "detail": "EJS pages, forms and Bootstrap",
+      "bounds": [
+        90,
+        500,
+        240,
+        86
+      ],
+      "documentation": "Browser web UI. EJS pages, forms and Bootstrap"
+    },
+    {
+      "id": "webapp",
+      "layer": "application",
+      "type": "ApplicationComponent",
+      "typeLabel": "Application component",
+      "name": "Music Room web app",
+      "detail": "Express routes and controllers",
+      "bounds": [
+        430,
+        500,
+        240,
+        86
+      ],
+      "documentation": "Music Room web app. Express routes and controllers"
+    },
+    {
+      "id": "library-api",
+      "layer": "application",
+      "type": "ApplicationService",
+      "typeLabel": "Application service",
+      "name": "Library management",
+      "detail": "Browse, filter, create, edit, delete",
+      "bounds": [
+        850,
+        500,
+        260,
+        86
+      ],
+      "documentation": "Library management. Browse, filter, create, edit, delete"
+    },
+    {
+      "id": "search-api",
+      "layer": "application",
+      "type": "ApplicationService",
+      "typeLabel": "Application service",
+      "name": "Discovery and import",
+      "detail": "Spotify search and library saves",
+      "bounds": [
+        1270,
+        500,
+        260,
+        86
+      ],
+      "documentation": "Discovery and import. Spotify search and library saves"
+    },
+    {
+      "id": "play-api",
+      "layer": "application",
+      "type": "ApplicationService",
+      "typeLabel": "Application service",
+      "name": "Playback control",
+      "detail": "Play / pause on a Spotify device",
+      "bounds": [
+        1690,
+        500,
+        260,
+        86
+      ],
+      "documentation": "Playback control. Play / pause on a Spotify device"
+    },
+    {
+      "id": "spotify-api",
+      "layer": "application",
+      "type": "ApplicationService",
+      "typeLabel": "External application service",
+      "name": "Spotify Web API",
+      "detail": "OAuth, catalogue, device control",
+      "bounds": [
+        2110,
+        500,
+        360,
+        86
+      ],
+      "documentation": "Spotify Web API. OAuth, catalogue, device control"
+    },
+    {
+      "id": "library-module",
+      "layer": "application",
+      "type": "ApplicationComponent",
+      "typeLabel": "Application component",
+      "name": "Library module",
+      "detail": "Controller \u00b7 service \u00b7 repository",
+      "bounds": [
+        850,
+        730,
+        260,
+        86
+      ],
+      "documentation": "LibraryController, LibraryService, LibraryRepository and the Track, Album, Artist, PersonArtist and GroupArtist models. Implements library reads and transactional writes."
+    },
+    {
+      "id": "records",
+      "layer": "application",
+      "type": "DataObject",
+      "typeLabel": "Data object",
+      "name": "Library records",
+      "detail": "Entities, artist credits, memberships",
+      "bounds": [
+        1270,
+        730,
+        260,
+        86
+      ],
+      "documentation": "Logical data held in albums, tracks, artists, track_artists, album_artists and artist_memberships. Stores metadata and image URLs, not Spotify audio."
+    },
+    {
+      "id": "spotify-adapter",
+      "layer": "application",
+      "type": "ApplicationComponent",
+      "typeLabel": "Application component",
+      "name": "Spotify integration",
+      "detail": "SpotifyController \u00b7 SpotifyClient",
+      "bounds": [
+        1690,
+        730,
+        260,
+        86
+      ],
+      "documentation": "Search, authorization, import metadata, and control playback using spotify-web-api-node. Tokens and refresh timer are in application memory, not user database sessions."
+    },
+    {
+      "id": "spotify",
+      "layer": "application",
+      "type": "ApplicationComponent",
+      "typeLabel": "External application component",
+      "name": "Spotify platform",
+      "detail": "External service, outside Docker",
+      "bounds": [
+        2110,
+        730,
+        360,
+        86
+      ],
+      "documentation": "Spotify platform. External service, outside Docker"
+    },
+    {
+      "id": "browser",
+      "layer": "technology",
+      "type": "SystemSoftware",
+      "typeLabel": "System software",
+      "name": "Web browser",
+      "detail": "Renders pages and sends requests",
+      "bounds": [
+        90,
+        1100,
+        240,
+        86
+      ],
+      "documentation": "Web browser. Renders pages and sends requests"
+    },
+    {
+      "id": "hosting",
+      "layer": "technology",
+      "type": "TechnologyService",
+      "typeLabel": "Technology service",
+      "name": "Application hosting",
+      "detail": "HTTP server on port 5050",
+      "bounds": [
+        850,
+        960,
+        260,
+        75
+      ],
+      "documentation": "Application hosting. HTTP server on port 5050"
+    },
+    {
+      "id": "persistence",
+      "layer": "technology",
+      "type": "TechnologyService",
+      "typeLabel": "Technology service",
+      "name": "Database persistence",
+      "detail": "MySQL queries and transactions",
+      "bounds": [
+        1270,
+        960,
+        260,
+        75
+      ],
+      "documentation": "Database persistence. MySQL queries and transactions"
+    },
+    {
+      "id": "docker",
+      "layer": "technology",
+      "type": "Node",
+      "typeLabel": "Node",
+      "name": "Docker Compose environment",
+      "detail": "Runs the application and database as separate services",
+      "bounds": [
+        400,
+        1060,
+        2140,
+        166
+      ],
+      "documentation": "Docker deployment defined in compose.yaml. Composes the app and db container nodes; MySQL data is held in a named persistent volume.",
+      "container": true
+    },
+    {
+      "id": "app-container",
+      "layer": "technology",
+      "type": "Node",
+      "typeLabel": "Node",
+      "name": "App container",
+      "detail": "Node.js 24 \u00b7 Express \u00b7 app service",
+      "bounds": [
+        850,
+        1100,
+        260,
+        86
+      ],
+      "documentation": "App container. Node.js 24 \u00b7 Express \u00b7 app service",
+      "parent": "docker"
+    },
+    {
+      "id": "db-container",
+      "layer": "technology",
+      "type": "Node",
+      "typeLabel": "Node",
+      "name": "Database container",
+      "detail": "MySQL 8.4 \u00b7 db service \u00b7 port 3306",
+      "bounds": [
+        1270,
+        1100,
+        260,
+        86
+      ],
+      "documentation": "Database container. MySQL 8.4 \u00b7 db service \u00b7 port 3306",
+      "parent": "docker"
+    },
+    {
+      "id": "database",
+      "layer": "technology",
+      "type": "Artifact",
+      "typeLabel": "Artifact",
+      "name": "Persistent music data",
+      "detail": "mysql_data volume \u00b7 music schema",
+      "bounds": [
+        1690,
+        1100,
+        260,
+        86
+      ],
+      "documentation": "Persistent music data. mysql_data volume \u00b7 music schema",
+      "parent": "docker"
+    },
+    {
+      "id": "schema",
+      "layer": "technology",
+      "type": "Artifact",
+      "typeLabel": "Artifact",
+      "name": "Database initialization",
+      "detail": "db.sql \u00b7 imported on first startup",
+      "bounds": [
+        2110,
+        1100,
+        360,
+        86
+      ],
+      "documentation": "Database initialization. db.sql \u00b7 imported on first startup",
+      "parent": "docker"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r-user-role",
+      "type": "AssignmentRelationship",
+      "source": "user",
+      "target": "curator",
+      "name": "takes role",
+      "points": [
+        [
+          330,
+          293
+        ],
+        [
+          430,
+          293
+        ]
+      ],
+      "labelAt": [
+        348,
+        282
+      ]
+    },
+    {
+      "id": "r-role-manage",
+      "type": "AssignmentRelationship",
+      "source": "curator",
+      "target": "manage",
+      "name": "performs",
+      "points": [
+        [
+          670,
+          293
+        ],
+        [
+          850,
+          293
+        ]
+      ],
+      "labelAt": [
+        716,
+        282
+      ]
+    },
+    {
+      "id": "r-role-discover",
+      "type": "AssignmentRelationship",
+      "source": "curator",
+      "target": "discover",
+      "name": "performs",
+      "points": [
+        [
+          550,
+          250
+        ],
+        [
+          550,
+          208
+        ],
+        [
+          1400,
+          208
+        ],
+        [
+          1400,
+          250
+        ]
+      ],
+      "labelAt": [
+        910,
+        199
+      ]
+    },
+    {
+      "id": "r-role-listen",
+      "type": "AssignmentRelationship",
+      "source": "curator",
+      "target": "listen",
+      "name": "performs",
+      "points": [
+        [
+          550,
+          250
+        ],
+        [
+          550,
+          183
+        ],
+        [
+          1820,
+          183
+        ],
+        [
+          1820,
+          250
+        ]
+      ],
+      "labelAt": [
+        1500,
+        175
+      ]
+    },
+    {
+      "id": "r-manage-collection",
+      "type": "AccessRelationship",
+      "source": "manage",
+      "target": "collection",
+      "name": "reads / writes",
+      "accessType": 3,
+      "points": [
+        [
+          980,
+          336
+        ],
+        [
+          980,
+          376
+        ],
+        [
+          2290,
+          376
+        ],
+        [
+          2290,
+          336
+        ]
+      ],
+      "labelAt": [
+        1760,
+        367
+      ]
+    },
+    {
+      "id": "r-library-serves",
+      "type": "ServingRelationship",
+      "source": "library-api",
+      "target": "manage",
+      "name": "serves",
+      "points": [
+        [
+          980,
+          500
+        ],
+        [
+          980,
+          336
+        ]
+      ],
+      "labelAt": [
+        994,
+        437
+      ]
+    },
+    {
+      "id": "r-discovery-serves",
+      "type": "ServingRelationship",
+      "source": "search-api",
+      "target": "discover",
+      "name": "serves",
+      "points": [
+        [
+          1400,
+          500
+        ],
+        [
+          1400,
+          336
+        ]
+      ],
+      "labelAt": [
+        1414,
+        437
+      ]
+    },
+    {
+      "id": "r-playback-serves",
+      "type": "ServingRelationship",
+      "source": "play-api",
+      "target": "listen",
+      "name": "serves",
+      "points": [
+        [
+          1820,
+          500
+        ],
+        [
+          1820,
+          336
+        ]
+      ],
+      "labelAt": [
+        1834,
+        437
+      ]
+    },
+    {
+      "id": "r-ui-role",
+      "type": "ServingRelationship",
+      "source": "ui",
+      "target": "curator",
+      "name": "serves",
+      "points": [
+        [
+          210,
+          500
+        ],
+        [
+          210,
+          435
+        ],
+        [
+          550,
+          435
+        ],
+        [
+          550,
+          336
+        ]
+      ],
+      "labelAt": [
+        220,
+        425
+      ]
+    },
+    {
+      "id": "r-app-ui",
+      "type": "CompositionRelationship",
+      "source": "webapp",
+      "target": "ui",
+      "name": "exposes",
+      "points": [
+        [
+          430,
+          543
+        ],
+        [
+          330,
+          543
+        ]
+      ],
+      "labelAt": [
+        349,
+        532
+      ]
+    },
+    {
+      "id": "r-app-library",
+      "type": "CompositionRelationship",
+      "source": "webapp",
+      "target": "library-module",
+      "name": "contains",
+      "points": [
+        [
+          550,
+          586
+        ],
+        [
+          550,
+          676
+        ],
+        [
+          980,
+          676
+        ],
+        [
+          980,
+          730
+        ]
+      ],
+      "labelAt": [
+        700,
+        667
+      ]
+    },
+    {
+      "id": "r-app-spotify",
+      "type": "CompositionRelationship",
+      "source": "webapp",
+      "target": "spotify-adapter",
+      "name": "contains",
+      "points": [
+        [
+          670,
+          557
+        ],
+        [
+          710,
+          557
+        ],
+        [
+          710,
+          650
+        ],
+        [
+          1820,
+          650
+        ],
+        [
+          1820,
+          730
+        ]
+      ],
+      "labelAt": [
+        1555,
+        641
+      ]
+    },
+    {
+      "id": "r-library-realizes",
+      "type": "RealizationRelationship",
+      "source": "library-module",
+      "target": "library-api",
+      "name": "realizes",
+      "points": [
+        [
+          980,
+          730
+        ],
+        [
+          980,
+          586
+        ]
+      ],
+      "labelAt": [
+        994,
+        618
+      ]
+    },
+    {
+      "id": "r-spotify-discovery",
+      "type": "RealizationRelationship",
+      "source": "spotify-adapter",
+      "target": "search-api",
+      "name": "realizes",
+      "points": [
+        [
+          1750,
+          730
+        ],
+        [
+          1750,
+          625
+        ],
+        [
+          1400,
+          625
+        ],
+        [
+          1400,
+          586
+        ]
+      ],
+      "labelAt": [
+        1430,
+        616
+      ]
+    },
+    {
+      "id": "r-spotify-playback",
+      "type": "RealizationRelationship",
+      "source": "spotify-adapter",
+      "target": "play-api",
+      "name": "realizes",
+      "points": [
+        [
+          1850,
+          730
+        ],
+        [
+          1850,
+          586
+        ]
+      ],
+      "labelAt": [
+        1864,
+        613
+      ]
+    },
+    {
+      "id": "r-library-data",
+      "type": "AccessRelationship",
+      "source": "library-module",
+      "target": "records",
+      "name": "reads / writes",
+      "accessType": 3,
+      "points": [
+        [
+          1110,
+          773
+        ],
+        [
+          1270,
+          773
+        ]
+      ],
+      "labelAt": [
+        1130,
+        762
+      ]
+    },
+    {
+      "id": "r-data-business",
+      "type": "RealizationRelationship",
+      "source": "records",
+      "target": "collection",
+      "name": "represents",
+      "points": [
+        [
+          1400,
+          730
+        ],
+        [
+          1400,
+          700
+        ],
+        [
+          1580,
+          700
+        ],
+        [
+          1580,
+          423
+        ],
+        [
+          2290,
+          423
+        ],
+        [
+          2290,
+          336
+        ]
+      ],
+      "labelAt": [
+        2310,
+        413
+      ]
+    },
+    {
+      "id": "r-spotify-api-realization",
+      "type": "RealizationRelationship",
+      "source": "spotify",
+      "target": "spotify-api",
+      "name": "realizes",
+      "points": [
+        [
+          2290,
+          730
+        ],
+        [
+          2290,
+          586
+        ]
+      ],
+      "labelAt": [
+        2304,
+        655
+      ]
+    },
+    {
+      "id": "r-spotify-serves-adapter",
+      "type": "ServingRelationship",
+      "source": "spotify-api",
+      "target": "spotify-adapter",
+      "name": "serves",
+      "points": [
+        [
+          2110,
+          543
+        ],
+        [
+          2020,
+          543
+        ],
+        [
+          2020,
+          773
+        ],
+        [
+          1950,
+          773
+        ]
+      ],
+      "labelAt": [
+        2032,
+        678
+      ]
+    },
+    {
+      "id": "r-browser-serves-ui",
+      "type": "ServingRelationship",
+      "source": "browser",
+      "target": "ui",
+      "name": "serves",
+      "points": [
+        [
+          210,
+          1100
+        ],
+        [
+          210,
+          586
+        ]
+      ],
+      "labelAt": [
+        224,
+        920
+      ]
+    },
+    {
+      "id": "r-hosting-serves",
+      "type": "ServingRelationship",
+      "source": "hosting",
+      "target": "webapp",
+      "name": "hosts",
+      "points": [
+        [
+          980,
+          960
+        ],
+        [
+          980,
+          924
+        ],
+        [
+          750,
+          924
+        ],
+        [
+          750,
+          605
+        ],
+        [
+          550,
+          605
+        ],
+        [
+          550,
+          586
+        ]
+      ],
+      "labelAt": [
+        760,
+        853
+      ]
+    },
+    {
+      "id": "r-persistence-serves",
+      "type": "ServingRelationship",
+      "source": "persistence",
+      "target": "library-module",
+      "name": "serves",
+      "points": [
+        [
+          1400,
+          960
+        ],
+        [
+          1400,
+          896
+        ],
+        [
+          980,
+          896
+        ],
+        [
+          980,
+          816
+        ]
+      ],
+      "labelAt": [
+        1080,
+        887
+      ]
+    },
+    {
+      "id": "r-app-runtime",
+      "type": "RealizationRelationship",
+      "source": "app-container",
+      "target": "hosting",
+      "name": "realizes",
+      "points": [
+        [
+          980,
+          1100
+        ],
+        [
+          980,
+          1035
+        ]
+      ],
+      "labelAt": [
+        994,
+        1053
+      ]
+    },
+    {
+      "id": "r-db-runtime",
+      "type": "RealizationRelationship",
+      "source": "db-container",
+      "target": "persistence",
+      "name": "realizes",
+      "points": [
+        [
+          1400,
+          1100
+        ],
+        [
+          1400,
+          1035
+        ]
+      ],
+      "labelAt": [
+        1414,
+        1053
+      ]
+    },
+    {
+      "id": "r-docker-app",
+      "type": "CompositionRelationship",
+      "source": "docker",
+      "target": "app-container",
+      "name": "contains",
+      "hidden": true
+    },
+    {
+      "id": "r-docker-db",
+      "type": "CompositionRelationship",
+      "source": "docker",
+      "target": "db-container",
+      "name": "contains",
+      "hidden": true
+    },
+    {
+      "id": "r-db-artifact",
+      "type": "AssignmentRelationship",
+      "source": "db-container",
+      "target": "database",
+      "name": "stores",
+      "points": [
+        [
+          1530,
+          1143
+        ],
+        [
+          1690,
+          1143
+        ]
+      ],
+      "labelAt": [
+        1586,
+        1133
+      ]
+    },
+    {
+      "id": "r-artifact-data",
+      "type": "RealizationRelationship",
+      "source": "database",
+      "target": "records",
+      "name": "persists",
+      "points": [
+        [
+          1820,
+          1100
+        ],
+        [
+          1820,
+          1045
+        ],
+        [
+          1580,
+          1045
+        ],
+        [
+          1580,
+          852
+        ],
+        [
+          1400,
+          852
+        ],
+        [
+          1400,
+          816
+        ]
+      ],
+      "labelAt": [
+        1590,
+        988
+      ]
+    },
+    {
+      "id": "r-db-schema",
+      "type": "AccessRelationship",
+      "source": "db-container",
+      "target": "schema",
+      "name": "reads on first startup",
+      "accessType": 1,
+      "points": [
+        [
+          1400,
+          1186
+        ],
+        [
+          1400,
+          1211
+        ],
+        [
+          2290,
+          1211
+        ],
+        [
+          2290,
+          1186
+        ]
+      ],
+      "labelAt": [
+        1860,
+        1202
+      ]
+    }
+  ]
+}

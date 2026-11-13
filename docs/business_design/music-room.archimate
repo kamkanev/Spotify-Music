@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<archimate:model xmlns:archimate="http://www.archimatetool.com/archimate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Music Room — Business and Technology Design" id="id-music-room" version="5.0.0">
+  <folder name="Strategy" id="folder-strategy" type="strategy" />
+  <folder name="Business" id="folder-business" type="business">
+    <element xsi:type="archimate:BusinessActor" id="user" name="Music enthusiast">
+      <documentation>Music enthusiast. Person using the application</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessRole" id="curator" name="Library curator">
+      <documentation>Library curator. Organize and explore music</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" id="manage" name="Manage music library">
+      <documentation>Manage music library. Create, edit, delete, link records</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" id="discover" name="Discover music">
+      <documentation>Discover music. Search catalogue and import music</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" id="listen" name="Control listening">
+      <documentation>Control listening. Start or pause Spotify playback</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessObject" id="collection" name="Personal music collection">
+      <documentation>Personal music collection. Tracks, albums, artists and credits</documentation>
+    </element>
+  </folder>
+  <folder name="Application" id="folder-application" type="application">
+    <element xsi:type="archimate:ApplicationInterface" id="ui" name="Browser web UI">
+      <documentation>Browser web UI. EJS pages, forms and Bootstrap</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" id="webapp" name="Music Room web app">
+      <documentation>Music Room web app. Express routes and controllers</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationService" id="library-api" name="Library management">
+      <documentation>Library management. Browse, filter, create, edit, delete</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationService" id="search-api" name="Discovery and import">
+      <documentation>Discovery and import. Spotify search and library saves</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationService" id="play-api" name="Playback control">
+      <documentation>Playback control. Play / pause on a Spotify device</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationService" id="spotify-api" name="Spotify Web API">
+      <documentation>Spotify Web API. OAuth, catalogue, device control</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" id="library-module" name="Library module">
+      <documentation>LibraryController, LibraryService, LibraryRepository and the Track, Album, Artist, PersonArtist and GroupArtist models. Implements library reads and transactional writes.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" id="records" name="Library records">
+      <documentation>Logical data held in albums, tracks, artists, track_artists, album_artists and artist_memberships. Stores metadata and image URLs, not Spotify audio.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" id="spotify-adapter" name="Spotify integration">
+      <documentation>Search, authorization, import metadata, and control playback using spotify-web-api-node. Tokens and refresh timer are in application memory, not user database sessions.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" id="spotify" name="Spotify platform">
+      <documentation>Spotify platform. External service, outside Docker</documentation>
+    </element>
+  </folder>
+  <folder name="Technology &amp; Physical" id="folder-technology" type="technology">
+    <element xsi:type="archimate:SystemSoftware" id="browser" name="Web browser">
+      <documentation>Web browser. Renders pages and sends requests</documentation>
+    </element>
+    <element xsi:type="archimate:TechnologyService" id="hosting" name="Application hosting">
+      <documentation>Application hosting. HTTP server on port 5050</documentation>
+    </element>
+    <element xsi:type="archimate:TechnologyService" id="persistence" name="Database persistence">
+      <documentation>Database persistence. MySQL queries and transactions</documentation>
+    </element>
+    <element xsi:type="archimate:Node" id="docker" name="Docker Compose environment">
+      <documentation>Docker deployment defined in compose.yaml. Composes the app and db container nodes; MySQL data is held in a named persistent volume.</documentation>
+    </element>
+    <element xsi:type="archimate:Node" id="app-container" name="App container">
+      <documentation>App container. Node.js 24 · Express · app service</documentation>
+    </element>
+    <element xsi:type="archimate:Node" id="db-container" name="Database container">
+      <documentation>Database container. MySQL 8.4 · db service · port 3306</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" id="database" name="Persistent music data">
+      <documentation>Persistent music data. mysql_data volume · music schema</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" id="schema" name="Database initialization">
+      <documentation>Database initialization. db.sql · imported on first startup</documentation>
+    </element>
+  </folder>
+  <folder name="Motivation" id="folder-motivation" type="motivation" />
+  <folder name="Implementation &amp; Migration" id="folder-implementation_migration" type="implementation_migration" />
+  <folder name="Other" id="folder-other" type="other" />
+  <folder name="Relations" id="folder-relations" type="relations">
+    <element xsi:type="archimate:AssignmentRelationship" id="r-user-role" name="takes role" source="user" target="curator" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-role-manage" name="performs" source="curator" target="manage" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-role-discover" name="performs" source="curator" target="discover" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-role-listen" name="performs" source="curator" target="listen" />
+    <element xsi:type="archimate:AccessRelationship" id="r-manage-collection" name="reads / writes" source="manage" target="collection" accessType="3" />
+    <element xsi:type="archimate:ServingRelationship" id="r-library-serves" name="serves" source="library-api" target="manage" />
+    <element xsi:type="archimate:ServingRelationship" id="r-discovery-serves" name="serves" source="search-api" target="discover" />
+    <element xsi:type="archimate:ServingRelationship" id="r-playback-serves" name="serves" source="play-api" target="listen" />
+    <element xsi:type="archimate:ServingRelationship" id="r-ui-role" name="serves" source="ui" target="curator" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-app-ui" name="exposes" source="webapp" target="ui" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-app-library" name="contains" source="webapp" target="library-module" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-app-spotify" name="contains" source="webapp" target="spotify-adapter" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-library-realizes" name="realizes" source="library-module" target="library-api" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-spotify-discovery" name="realizes" source="spotify-adapter" target="search-api" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-spotify-playback" name="realizes" source="spotify-adapter" target="play-api" />
+    <element xsi:type="archimate:AccessRelationship" id="r-library-data" name="reads / writes" source="library-module" target="records" accessType="3" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-data-business" name="represents" source="records" target="collection" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-spotify-api-realization" name="realizes" source="spotify" target="spotify-api" />
+    <element xsi:type="archimate:ServingRelationship" id="r-spotify-serves-adapter" name="serves" source="spotify-api" target="spotify-adapter" />
+    <element xsi:type="archimate:ServingRelationship" id="r-browser-serves-ui" name="serves" source="browser" target="ui" />
+    <element xsi:type="archimate:ServingRelationship" id="r-hosting-serves" name="hosts" source="hosting" target="webapp" />
+    <element xsi:type="archimate:ServingRelationship" id="r-persistence-serves" name="serves" source="persistence" target="library-module" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-app-runtime" name="realizes" source="app-container" target="hosting" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-db-runtime" name="realizes" source="db-container" target="persistence" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-docker-app" name="contains" source="docker" target="app-container" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-docker-db" name="contains" source="docker" target="db-container" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-db-artifact" name="stores" source="db-container" target="database" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-artifact-data" name="persists" source="database" target="records" />
+    <element xsi:type="archimate:AccessRelationship" id="r-db-schema" name="reads on first startup" source="db-container" target="schema" accessType="1" />
+  </folder>
+  <folder name="Views" id="folder-diagrams" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Music Room — Landscape Layered View" id="view-landscape">
+      <documentation>Current architecture, left-to-right landscape view. Business yellow; application blue; technology green. Native element notation is rendered by Archi. Nesting in Docker host expresses composition of the two container nodes.</documentation>
+      <child xsi:type="archimate:Group" id="view-layer-business" name="Business layer" fillColor="#fffbec">
+        <bounds x="30" y="130" width="2580" height="280" />
+        <child xsi:type="archimate:DiagramObject" id="view-user" archimateElement="user" fillColor="#fff2bd">
+          <bounds x="60" y="120" width="240" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-user-role" source="view-user" target="view-curator" archimateRelationship="r-user-role" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-curator" archimateElement="curator" fillColor="#fff2bd" targetConnections="view-r-user-role view-r-ui-role">
+          <bounds x="400" y="120" width="240" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-role-manage" source="view-curator" target="view-manage" archimateRelationship="r-role-manage" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-role-discover" source="view-curator" target="view-discover" archimateRelationship="r-role-discover">
+            <bendpoint startX="0" startY="-85" endX="-850" endY="-85" />
+            <bendpoint startX="850" startY="-85" endX="0" endY="-85" />
+          </sourceConnection>
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-role-listen" source="view-curator" target="view-listen" archimateRelationship="r-role-listen">
+            <bendpoint startX="0" startY="-110" endX="-1270" endY="-110" />
+            <bendpoint startX="1270" startY="-110" endX="0" endY="-110" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-manage" archimateElement="manage" fillColor="#fff2bd" targetConnections="view-r-role-manage view-r-library-serves">
+          <bounds x="820" y="120" width="260" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-manage-collection" source="view-manage" target="view-collection" archimateRelationship="r-manage-collection">
+            <bendpoint startX="0" startY="83" endX="-1310" endY="83" />
+            <bendpoint startX="1310" startY="83" endX="0" endY="83" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-discover" archimateElement="discover" fillColor="#fff2bd" targetConnections="view-r-role-discover view-r-discovery-serves">
+          <bounds x="1240" y="120" width="260" height="86" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-listen" archimateElement="listen" fillColor="#fff2bd" targetConnections="view-r-role-listen view-r-playback-serves">
+          <bounds x="1660" y="120" width="260" height="86" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-collection" archimateElement="collection" fillColor="#fff2bd" targetConnections="view-r-manage-collection view-r-data-business">
+          <bounds x="2080" y="120" width="360" height="86" />
+        </child>
+      </child>
+      <child xsi:type="archimate:Group" id="view-layer-application" name="Application layer" fillColor="#f2f8fc">
+        <bounds x="30" y="450" width="2580" height="420" />
+        <child xsi:type="archimate:DiagramObject" id="view-ui" archimateElement="ui" fillColor="#dceefa" targetConnections="view-r-app-ui view-r-browser-serves-ui">
+          <bounds x="60" y="50" width="240" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-ui-role" source="view-ui" target="view-curator" archimateRelationship="r-ui-role">
+            <bendpoint startX="0" startY="-108" endX="-340" endY="142" />
+            <bendpoint startX="340" startY="-108" endX="0" endY="142" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-webapp" archimateElement="webapp" fillColor="#dceefa" targetConnections="view-r-hosting-serves">
+          <bounds x="400" y="50" width="240" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-app-ui" source="view-webapp" target="view-ui" archimateRelationship="r-app-ui" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-app-library" source="view-webapp" target="view-library-module" archimateRelationship="r-app-library">
+            <bendpoint startX="0" startY="133" endX="-430" endY="-97" />
+            <bendpoint startX="430" startY="133" endX="0" endY="-97" />
+          </sourceConnection>
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-app-spotify" source="view-webapp" target="view-spotify-adapter" archimateRelationship="r-app-spotify">
+            <bendpoint startX="160" startY="14" endX="-1110" endY="-216" />
+            <bendpoint startX="160" startY="107" endX="-1110" endY="-123" />
+            <bendpoint startX="1270" startY="107" endX="0" endY="-123" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-library-api" archimateElement="library-api" fillColor="#dceefa" targetConnections="view-r-library-realizes">
+          <bounds x="820" y="50" width="260" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-library-serves" source="view-library-api" target="view-manage" archimateRelationship="r-library-serves" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-search-api" archimateElement="search-api" fillColor="#dceefa" targetConnections="view-r-spotify-discovery">
+          <bounds x="1240" y="50" width="260" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-discovery-serves" source="view-search-api" target="view-discover" archimateRelationship="r-discovery-serves" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-play-api" archimateElement="play-api" fillColor="#dceefa" targetConnections="view-r-spotify-playback">
+          <bounds x="1660" y="50" width="260" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-playback-serves" source="view-play-api" target="view-listen" archimateRelationship="r-playback-serves" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-spotify-api" archimateElement="spotify-api" fillColor="#dceefa" targetConnections="view-r-spotify-api-realization">
+          <bounds x="2080" y="50" width="360" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-spotify-serves-adapter" source="view-spotify-api" target="view-spotify-adapter" archimateRelationship="r-spotify-serves-adapter">
+            <bendpoint startX="-270" startY="0" endX="200" endY="-230" />
+            <bendpoint startX="-270" startY="230" endX="200" endY="0" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-library-module" archimateElement="library-module" fillColor="#dceefa" targetConnections="view-r-app-library view-r-persistence-serves">
+          <bounds x="820" y="280" width="260" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-library-realizes" source="view-library-module" target="view-library-api" archimateRelationship="r-library-realizes" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-library-data" source="view-library-module" target="view-records" archimateRelationship="r-library-data" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-records" archimateElement="records" fillColor="#dceefa" targetConnections="view-r-library-data view-r-artifact-data">
+          <bounds x="1240" y="280" width="260" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-data-business" source="view-records" target="view-collection" archimateRelationship="r-data-business">
+            <bendpoint startX="0" startY="-73" endX="-890" endY="407" />
+            <bendpoint startX="180" startY="-73" endX="-710" endY="407" />
+            <bendpoint startX="180" startY="-350" endX="-710" endY="130" />
+            <bendpoint startX="890" startY="-350" endX="0" endY="130" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-spotify-adapter" archimateElement="spotify-adapter" fillColor="#dceefa" targetConnections="view-r-app-spotify view-r-spotify-serves-adapter">
+          <bounds x="1660" y="280" width="260" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-spotify-discovery" source="view-spotify-adapter" target="view-search-api" archimateRelationship="r-spotify-discovery">
+            <bendpoint startX="-70" startY="-148" endX="350" endY="82" />
+            <bendpoint startX="-420" startY="-148" endX="0" endY="82" />
+          </sourceConnection>
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-spotify-playback" source="view-spotify-adapter" target="view-play-api" archimateRelationship="r-spotify-playback" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-spotify" archimateElement="spotify" fillColor="#dceefa">
+          <bounds x="2080" y="280" width="360" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-spotify-api-realization" source="view-spotify" target="view-spotify-api" archimateRelationship="r-spotify-api-realization" />
+        </child>
+      </child>
+      <child xsi:type="archimate:Group" id="view-layer-technology" name="Technology layer" fillColor="#f3f9f1">
+        <bounds x="30" y="910" width="2580" height="330" />
+        <child xsi:type="archimate:DiagramObject" id="view-browser" archimateElement="browser" fillColor="#dff0dc">
+          <bounds x="60" y="190" width="240" height="86" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-browser-serves-ui" source="view-browser" target="view-ui" archimateRelationship="r-browser-serves-ui" />
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-hosting" archimateElement="hosting" fillColor="#dff0dc" targetConnections="view-r-app-runtime">
+          <bounds x="820" y="50" width="260" height="75" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-hosting-serves" source="view-hosting" target="view-webapp" archimateRelationship="r-hosting-serves">
+            <bendpoint startX="0" startY="-73" endX="430" endY="381" />
+            <bendpoint startX="-230" startY="-73" endX="200" endY="381" />
+            <bendpoint startX="-230" startY="-392" endX="200" endY="62" />
+            <bendpoint startX="-430" startY="-392" endX="0" endY="62" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-persistence" archimateElement="persistence" fillColor="#dff0dc" targetConnections="view-r-db-runtime">
+          <bounds x="1240" y="50" width="260" height="75" />
+          <sourceConnection xsi:type="archimate:Connection" id="view-r-persistence-serves" source="view-persistence" target="view-library-module" archimateRelationship="r-persistence-serves">
+            <bendpoint startX="0" startY="-101" endX="420" endY="123" />
+            <bendpoint startX="-420" startY="-101" endX="0" endY="123" />
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="view-docker" archimateElement="docker" fillColor="#dff0dc">
+          <bounds x="370" y="150" width="2140" height="166" />
+          <child xsi:type="archimate:DiagramObject" id="view-app-container" archimateElement="app-container" fillColor="#dff0dc">
+            <bounds x="450" y="40" width="260" height="86" />
+            <sourceConnection xsi:type="archimate:Connection" id="view-r-app-runtime" source="view-app-container" target="view-hosting" archimateRelationship="r-app-runtime" />
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="view-db-container" archimateElement="db-container" fillColor="#dff0dc">
+            <bounds x="870" y="40" width="260" height="86" />
+            <sourceConnection xsi:type="archimate:Connection" id="view-r-db-runtime" source="view-db-container" target="view-persistence" archimateRelationship="r-db-runtime" />
+            <sourceConnection xsi:type="archimate:Connection" id="view-r-db-artifact" source="view-db-container" target="view-database" archimateRelationship="r-db-artifact" />
+            <sourceConnection xsi:type="archimate:Connection" id="view-r-db-schema" source="view-db-container" target="view-schema" archimateRelationship="r-db-schema">
+              <bendpoint startX="0" startY="68" endX="-890" endY="68" />
+              <bendpoint startX="890" startY="68" endX="0" endY="68" />
+            </sourceConnection>
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="view-database" archimateElement="database" fillColor="#dff0dc" targetConnections="view-r-db-artifact">
+            <bounds x="1290" y="40" width="260" height="86" />
+            <sourceConnection xsi:type="archimate:Connection" id="view-r-artifact-data" source="view-database" target="view-records" archimateRelationship="r-artifact-data">
+              <bendpoint startX="0" startY="-98" endX="420" endY="272" />
+              <bendpoint startX="-240" startY="-98" endX="180" endY="272" />
+              <bendpoint startX="-240" startY="-291" endX="180" endY="79" />
+              <bendpoint startX="-420" startY="-291" endX="0" endY="79" />
+            </sourceConnection>
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="view-schema" archimateElement="schema" fillColor="#dff0dc" targetConnections="view-r-db-schema">
+            <bounds x="1710" y="40" width="360" height="86" />
+          </child>
+        </child>
+      </child>
+    </element>
+  </folder>
+  <purpose>Current-state ArchiMate model of Music Room: local music library management, Spotify discovery/playback integration, and Docker/MySQL deployment. See README.md for scope, assumptions and code mapping.</purpose>
+</archimate:model>

@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2640" height="1380" viewBox="0 0 2640 1380" role="img" aria-labelledby="title description">
+<title id="title">Music Room — layered ArchiMate architecture</title>
+<desc id="description">Landscape view of the business, application and technology layers. Yellow: user and music-library activities. Blue: Express application, library records and external Spotify integration. Green: browser, Docker services and persistent MySQL data.</desc>
+<defs>
+  <marker id="serving" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#475569" stroke-width="1.8"/></marker>
+  <marker id="realization" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L12,7 L1,13 Z" fill="white" stroke="#475569" stroke-width="1.6"/></marker>
+  <marker id="assignment" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11 Z" fill="#475569"/></marker>
+  <marker id="assigned" markerWidth="9" markerHeight="9" refX="4" refY="4" markerUnits="userSpaceOnUse"><circle cx="4" cy="4" r="3" fill="#475569"/></marker>
+  <marker id="composition" markerWidth="15" markerHeight="12" refX="1" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,6 L7,1 L13,6 L7,11 Z" fill="#475569"/></marker>
+  <marker id="access-end" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L9,5.5 L1,10" fill="none" stroke="#475569" stroke-width="1.6"/></marker>
+  <marker id="access-start" markerWidth="11" markerHeight="11" refX="2" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M10,1 L2,5.5 L10,10" fill="none" stroke="#475569" stroke-width="1.6"/></marker>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #1e293b; }
+    .heading { font-size: 34px; font-weight: 700; }
+    .subtitle { font-size: 17px; fill: #64748b; }
+    .layer-title { font-size: 17px; font-weight: 700; letter-spacing: 2px; }
+    .type { font-size: 12px; letter-spacing: 0.6px; }
+    .name { font-size: 19px; font-weight: 700; }
+    .detail { font-size: 13px; fill: #475569; }
+    .relation { font-size: 12px; fill: #475569; paint-order: stroke; stroke: white; stroke-width: 5px; stroke-linejoin: round; }
+  </style>
+</defs>
+<rect width="2640" height="1380" fill="#ffffff"/>
+<text x="60" y="62" class="heading">MUSIC ROOM</text>
+<text x="340" y="62" class="subtitle">Business • application • technology</text>
+<text x="60" y="95" class="subtitle">Layered viewpoint · current implementation · Spotify is an external dependency</text>
+
+<rect x="30" y="130" width="2580" height="280" rx="12" fill="#fffbec" stroke="#96712b" stroke-opacity="0.35"/>
+<rect x="30" y="130" width="10" height="280" rx="4" fill="#96712b"/>
+<text x="58" y="162" class="layer-title">BUSINESS LAYER</text>
+<rect x="30" y="450" width="2580" height="420" rx="12" fill="#f2f8fc" stroke="#367197" stroke-opacity="0.35"/>
+<rect x="30" y="450" width="10" height="420" rx="4" fill="#367197"/>
+<text x="58" y="482" class="layer-title">APPLICATION LAYER</text>
+<rect x="30" y="910" width="2580" height="330" rx="12" fill="#f3f9f1" stroke="#4e7850" stroke-opacity="0.35"/>
+<rect x="30" y="910" width="10" height="330" rx="4" fill="#4e7850"/>
+<text x="58" y="942" class="layer-title">TECHNOLOGY LAYER</text>
+<rect x="400" y="1060" width="2140" height="166" rx="6" fill="#dff0dc" fill-opacity="0.4" stroke="#4e7850" stroke-dasharray="5 4"/>
+<text x="418" y="1084" class="detail">NODE · Docker Compose environment — Runs the application and database as separate services</text>
+<path d="M330,293 L430,293" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#assigned)" marker-end="url(#assignment)"/>
+<text x="348" y="282" class="relation">takes role</text>
+<path d="M670,293 L850,293" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#assigned)" marker-end="url(#assignment)"/>
+<text x="716" y="282" class="relation">performs</text>
+<path d="M550,250 L550,208 L1400,208 L1400,250" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#assigned)" marker-end="url(#assignment)"/>
+<text x="910" y="199" class="relation">performs</text>
+<path d="M550,250 L550,183 L1820,183 L1820,250" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#assigned)" marker-end="url(#assignment)"/>
+<text x="1500" y="175" class="relation">performs</text>
+<path d="M980,336 L980,376 L2290,376 L2290,336" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="3 5" marker-end="url(#access-end)" marker-start="url(#access-start)"/>
+<text x="1760" y="367" class="relation">reads / writes</text>
+<path d="M980,500 L980,336" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="994" y="437" class="relation">serves</text>
+<path d="M1400,500 L1400,336" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="1414" y="437" class="relation">serves</text>
+<path d="M1820,500 L1820,336" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="1834" y="437" class="relation">serves</text>
+<path d="M210,500 L210,435 L550,435 L550,336" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="220" y="425" class="relation">serves</text>
+<path d="M430,543 L330,543" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#composition)"/>
+<text x="349" y="532" class="relation">exposes</text>
+<path d="M550,586 L550,676 L980,676 L980,730" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#composition)"/>
+<text x="700" y="667" class="relation">contains</text>
+<path d="M670,557 L710,557 L710,650 L1820,650 L1820,730" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#composition)"/>
+<text x="1555" y="641" class="relation">contains</text>
+<path d="M980,730 L980,586" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="994" y="618" class="relation">realizes</text>
+<path d="M1750,730 L1750,625 L1400,625 L1400,586" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="1430" y="616" class="relation">realizes</text>
+<path d="M1850,730 L1850,586" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="1864" y="613" class="relation">realizes</text>
+<path d="M1110,773 L1270,773" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="3 5" marker-end="url(#access-end)" marker-start="url(#access-start)"/>
+<text x="1130" y="762" class="relation">reads / writes</text>
+<path d="M1400,730 L1400,700 L1580,700 L1580,423 L2290,423 L2290,336" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="2310" y="413" class="relation">represents</text>
+<path d="M2290,730 L2290,586" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="2304" y="655" class="relation">realizes</text>
+<path d="M2110,543 L2020,543 L2020,773 L1950,773" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="2032" y="678" class="relation">serves</text>
+<path d="M210,1100 L210,586" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="224" y="920" class="relation">serves</text>
+<path d="M980,960 L980,924 L750,924 L750,605 L550,605 L550,586" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="760" y="853" class="relation">hosts</text>
+<path d="M1400,960 L1400,896 L980,896 L980,816" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#serving)"/>
+<text x="1080" y="887" class="relation">serves</text>
+<path d="M980,1100 L980,1035" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="994" y="1053" class="relation">realizes</text>
+<path d="M1400,1100 L1400,1035" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="1414" y="1053" class="relation">realizes</text>
+<path d="M1530,1143 L1690,1143" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" marker-start="url(#assigned)" marker-end="url(#assignment)"/>
+<text x="1586" y="1133" class="relation">stores</text>
+<path d="M1820,1100 L1820,1045 L1580,1045 L1580,852 L1400,852 L1400,816" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#realization)"/>
+<text x="1590" y="988" class="relation">persists</text>
+<path d="M1400,1186 L1400,1211 L2290,1211 L2290,1186" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="3 5" marker-end="url(#access-end)"/>
+<text x="1860" y="1202" class="relation">reads on first startup</text>
+<rect x="90" y="250" width="240" height="86" rx="3" fill="#fff2bd" stroke="#96712b" stroke-width="1.5"/>
+<text x="104" y="270" class="type">BUSINESS ACTOR</text>
+<text x="104" y="297" class="name">Music enthusiast</text>
+<text x="104" y="318" class="detail">Person using the application</text>
+<rect x="430" y="250" width="240" height="86" rx="3" fill="#fff2bd" stroke="#96712b" stroke-width="1.5"/>
+<text x="444" y="270" class="type">BUSINESS ROLE</text>
+<text x="444" y="297" class="name">Library curator</text>
+<text x="444" y="318" class="detail">Organize and explore music</text>
+<rect x="850" y="250" width="260" height="86" rx="16" fill="#fff2bd" stroke="#96712b" stroke-width="1.5"/>
+<text x="864" y="270" class="type">BUSINESS PROCESS</text>
+<text x="864" y="297" class="name">Manage music library</text>
+<text x="864" y="318" class="detail">Create, edit, delete, link records</text>
+<rect x="1270" y="250" width="260" height="86" rx="16" fill="#fff2bd" stroke="#96712b" stroke-width="1.5"/>
+<text x="1284" y="270" class="type">BUSINESS PROCESS</text>
+<text x="1284" y="297" class="name">Discover music</text>
+<text x="1284" y="318" class="detail">Search catalogue and import music</text>
+<rect x="1690" y="250" width="260" height="86" rx="16" fill="#fff2bd" stroke="#96712b" stroke-width="1.5"/>
+<text x="1704" y="270" class="type">BUSINESS PROCESS</text>
+<text x="1704" y="297" class="name">Control listening</text>
+<text x="1704" y="318" class="detail">Start or pause Spotify playback</text>
+<rect x="2110" y="250" width="360" height="86" rx="3" fill="#fff2bd" stroke="#96712b" stroke-width="1.5"/>
+<text x="2124" y="270" class="type">BUSINESS OBJECT</text>
+<text x="2124" y="297" class="name">Personal music collection</text>
+<text x="2124" y="318" class="detail">Tracks, albums, artists and credits</text>
+<path d="M2110,277 H2470" fill="none" stroke="#96712b"/>
+<rect x="90" y="500" width="240" height="86" rx="3" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="104" y="520" class="type">APPLICATION INTERFACE</text>
+<text x="104" y="547" class="name">Browser web UI</text>
+<text x="104" y="568" class="detail">EJS pages, forms and Bootstrap</text>
+<rect x="430" y="500" width="240" height="86" rx="3" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="444" y="520" class="type">APPLICATION COMPONENT</text>
+<text x="444" y="547" class="name">Music Room web app</text>
+<text x="444" y="568" class="detail">Express routes and controllers</text>
+<path d="M648,509 h12 v17 h-12 z M643,512 h9 v4 h-9 z M643,520 h9 v4 h-9 z" fill="#dceefa" stroke="#367197"/>
+<rect x="850" y="500" width="260" height="86" rx="16" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="864" y="520" class="type">APPLICATION SERVICE</text>
+<text x="864" y="547" class="name">Library management</text>
+<text x="864" y="568" class="detail">Browse, filter, create, edit, delete</text>
+<rect x="1270" y="500" width="260" height="86" rx="16" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="1284" y="520" class="type">APPLICATION SERVICE</text>
+<text x="1284" y="547" class="name">Discovery and import</text>
+<text x="1284" y="568" class="detail">Spotify search and library saves</text>
+<rect x="1690" y="500" width="260" height="86" rx="16" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="1704" y="520" class="type">APPLICATION SERVICE</text>
+<text x="1704" y="547" class="name">Playback control</text>
+<text x="1704" y="568" class="detail">Play / pause on a Spotify device</text>
+<rect x="2110" y="500" width="360" height="86" rx="16" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="2124" y="520" class="type">EXTERNAL APPLICATION SERVICE</text>
+<text x="2124" y="547" class="name">Spotify Web API</text>
+<text x="2124" y="568" class="detail">OAuth, catalogue, device control</text>
+<rect x="850" y="730" width="260" height="86" rx="3" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="864" y="750" class="type">APPLICATION COMPONENT</text>
+<text x="864" y="777" class="name">Library module</text>
+<text x="864" y="798" class="detail">Controller · service · repository</text>
+<path d="M1088,739 h12 v17 h-12 z M1083,742 h9 v4 h-9 z M1083,750 h9 v4 h-9 z" fill="#dceefa" stroke="#367197"/>
+<rect x="1270" y="730" width="260" height="86" rx="3" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="1284" y="750" class="type">DATA OBJECT</text>
+<text x="1284" y="777" class="name">Library records</text>
+<text x="1284" y="798" class="detail">Entities, artist credits, memberships</text>
+<path d="M1270,757 H1530" fill="none" stroke="#367197"/>
+<rect x="1690" y="730" width="260" height="86" rx="3" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="1704" y="750" class="type">APPLICATION COMPONENT</text>
+<text x="1704" y="777" class="name">Spotify integration</text>
+<text x="1704" y="798" class="detail">SpotifyController · SpotifyClient</text>
+<path d="M1928,739 h12 v17 h-12 z M1923,742 h9 v4 h-9 z M1923,750 h9 v4 h-9 z" fill="#dceefa" stroke="#367197"/>
+<rect x="2110" y="730" width="360" height="86" rx="3" fill="#dceefa" stroke="#367197" stroke-width="1.5"/>
+<text x="2124" y="750" class="type">EXTERNAL APPLICATION COMPONENT</text>
+<text x="2124" y="777" class="name">Spotify platform</text>
+<text x="2124" y="798" class="detail">External service, outside Docker</text>
+<path d="M2448,739 h12 v17 h-12 z M2443,742 h9 v4 h-9 z M2443,750 h9 v4 h-9 z" fill="#dceefa" stroke="#367197"/>
+<rect x="90" y="1100" width="240" height="86" rx="3" fill="#dff0dc" stroke="#4e7850" stroke-width="1.5"/>
+<text x="104" y="1120" class="type">SYSTEM SOFTWARE</text>
+<text x="104" y="1147" class="name">Web browser</text>
+<text x="104" y="1168" class="detail">Renders pages and sends requests</text>
+<rect x="850" y="960" width="260" height="75" rx="16" fill="#dff0dc" stroke="#4e7850" stroke-width="1.5"/>
+<text x="864" y="980" class="type">TECHNOLOGY SERVICE</text>
+<text x="864" y="1007" class="name">Application hosting</text>
+<text x="864" y="1028" class="detail">HTTP server on port 5050</text>
+<rect x="1270" y="960" width="260" height="75" rx="16" fill="#dff0dc" stroke="#4e7850" stroke-width="1.5"/>
+<text x="1284" y="980" class="type">TECHNOLOGY SERVICE</text>
+<text x="1284" y="1007" class="name">Database persistence</text>
+<text x="1284" y="1028" class="detail">MySQL queries and transactions</text>
+<rect x="850" y="1100" width="260" height="86" rx="3" fill="#dff0dc" stroke="#4e7850" stroke-width="1.5"/>
+<text x="864" y="1120" class="type">NODE</text>
+<text x="864" y="1147" class="name">App container</text>
+<text x="864" y="1168" class="detail">Node.js 24 · Express · app service</text>
+<rect x="1270" y="1100" width="260" height="86" rx="3" fill="#dff0dc" stroke="#4e7850" stroke-width="1.5"/>
+<text x="1284" y="1120" class="type">NODE</text>
+<text x="1284" y="1147" class="name">Database container</text>
+<text x="1284" y="1168" class="detail">MySQL 8.4 · db service · port 3306</text>
+<rect x="1690" y="1100" width="260" height="86" rx="3" fill="#dff0dc" stroke="#4e7850" stroke-width="1.5"/>
+<text x="1704" y="1120" class="type">ARTIFACT</text>
+<text x="1704" y="1147" class="name">Persistent music data</text>
+<text x="1704" y="1168" class="detail">mysql_data volume · music schema</text>
+<rect x="2110" y="1100" width="360" height="86" rx="3" fill="#dff0dc" stroke="#4e7850" stroke-width="1.5"/>
+<text x="2124" y="1120" class="type">ARTIFACT</text>
+<text x="2124" y="1147" class="name">Database initialization</text>
+<text x="2124" y="1168" class="detail">db.sql · imported on first startup</text>
+<text x="60" y="1275" class="layer-title">RELATIONSHIPS</text>
+<path d="M95,1305 H160" fill="none" stroke="#475569" stroke-width="1.7"  marker-end="url(#assignment)" marker-start="url(#assigned)"/><text x="175" y="1310" class="detail">assigned / deployed</text>
+<path d="M550,1305 H615" fill="none" stroke="#475569" stroke-width="1.7"  marker-end="url(#serving)"/><text x="630" y="1310" class="detail">serves</text>
+<path d="M900,1305 H965" fill="none" stroke="#475569" stroke-width="1.7" stroke-dasharray="7 5" marker-end="url(#realization)"/><text x="980" y="1310" class="detail">realizes</text>
+<path d="M1280,1305 H1345" fill="none" stroke="#475569" stroke-width="1.7"  marker-start="url(#composition)"/><text x="1360" y="1310" class="detail">part of</text>
+<path d="M1650,1305 H1715" fill="none" stroke="#475569" stroke-width="1.7" stroke-dasharray="7 5" marker-end="url(#access-end)"/><text x="1730" y="1310" class="detail">accesses data</text>
+<text x="60" y="1352" class="subtitle">Colour identifies the layer. Solid diamonds denote composition. Database data is persisted; Spotify audio remains on Spotify devices.</text></svg>
