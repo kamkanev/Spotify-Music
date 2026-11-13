@@ -6,6 +6,9 @@ The Express app uses model, repository, service, and controller classes. See
 The [ArchiMate business design](docs/business_design/README.md) provides a wide,
 colored business/application/technology diagram and an editable Archi model.
 
+- [Доклад на български (PDF)](docs/report/Report.pdf) · [Typst source and instructions](docs/report/README.md)
+- [Презентация на български (PowerPoint)](docs/presentation/Music%20Room.pptx) · [PDF](docs/presentation/Music%20Room.pdf)
+
 Run Node.js and MySQL as two containers managed together by Docker Compose.
 This lets the application be rebuilt independently of the database, with database
 files preserved in the `mysql_data` Docker volume.
