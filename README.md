@@ -83,7 +83,8 @@ album forms can select credited artists. Artist forms can select existing groups
 for a person, or existing people as group members. These links are saved in the
 same transaction as the new record. Duplicate Spotify IDs/URIs are rejected
 rather than overwriting an existing record. A successful create redirects to the
-new detail page with a blue alert; form errors are red and keep entered values.
+corresponding list with a blue alert; form errors are red and keep entered values.
+Spotify login and Spotify IDs are not required for manual creation.
 
 Each list has its own database search form, separate from Spotify search:
 

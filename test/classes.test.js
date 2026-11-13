@@ -177,3 +177,18 @@ test('deletion rolls back credit cleanup if the final row delete fails', async (
     await assert.rejects(repository.deleteRecord('tracks', 1), /delete failed/);
     assert.deepEqual(calls, ['begin', 'unlink', 'rollback', 'release']);
 });
+
+test('manual creation returns to each library list without Spotify authentication', async () => {
+    const controller = new LibraryController({}, {createRecord: async (kind, body) => {
+        assert.equal(body.name, 'Manual record');
+        return {id: 7};
+    }}, {});
+    for (const kind of ['tracks', 'albums', 'artists']) {
+        await controller.createRecord(kind, {body: {name: 'Manual record'}}, {
+            redirect(status, url) {
+                assert.equal(status, 303);
+                assert.equal(url, `/${kind}?notice=created`);
+            }
+        });
+    }
+});

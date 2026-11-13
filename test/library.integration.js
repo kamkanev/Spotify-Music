@@ -179,9 +179,11 @@ test('class architecture preserves SQL relationships and HTTP routes', {
         const response = await formPost(`/${kind}/new`, fields);
         assert.equal(response.status, 303, await response.clone().text());
         const url = response.headers.get('location');
-        assert.ok(url.endsWith('notice=created'));
+        assert.equal(url, `/${kind}?notice=created`);
         assert.ok((await (await request(url)).text()).includes('alert-primary'));
-        return Number(url.match(/\/(\d+)\?/)[1]);
+        const name = new URLSearchParams(fields).get('name');
+        const [[row]] = await pool.execute(`SELECT id FROM ${kind} WHERE name = ? ORDER BY id DESC LIMIT 1`, [name]);
+        return row.id;
     }
     const newPerson = await create('artists', {name:'New person', artist_type:'person'});
     const newGroup = await create('artists', {name:'New group', artist_type:'group', member_ids:String(newPerson)});
