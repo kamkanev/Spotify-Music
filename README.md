@@ -9,7 +9,7 @@ colored business/application/technology diagram and an editable Archi model.
 - [Доклад на български (PDF)](docs/report/Report.pdf) · [Typst source and instructions](docs/report/README.md)
 - [Презентация на български (PowerPoint)](docs/presentation/Music%20Room.pptx) · [PDF](docs/presentation/Music%20Room.pdf)
 
-Run Node.js and MySQL as two containers managed together by Docker Compose.
+Run Node.js, MySQL, and the Dozzle log dashboard with Docker Compose.
 This lets the application be rebuilt independently of the database, with database
 files preserved in the `mysql_data` Docker volume.
 
@@ -203,6 +203,24 @@ docker compose exec db mysql -u music_app -p music
 ```
 
 ## Common commands
+
+### Browser log dashboard (Dozzle)
+
+Dozzle displays the local Docker containers' live logs, including `app` and `db`.
+It is included in `docker compose up --build -d`. To start only the dashboard:
+
+```sh
+docker compose up -d dozzle
+```
+
+Open **http://127.0.0.1:8080** and select the app or database container. This is a
+separate local HTTP dashboard; the application still uses HTTPS on port 5050.
+The dashboard is bound to localhost. It mounts the Docker socket to read container
+information and logs; container actions and shell access are disabled. Dashboard
+settings persist in `dozzle_data`. This is a live log viewer, not a long-term
+metrics or log archive. See the [Dozzle guide](https://dozzle.dev/guide/getting-started).
+
+### Container commands
 
 ```sh
 docker compose logs -f

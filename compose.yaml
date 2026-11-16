@@ -42,8 +42,21 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  dozzle:
+    image: amir20/dozzle:latest
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      DOZZLE_ENABLE_ACTIONS: "false"
+      DOZZLE_ENABLE_SHELL: "false"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - dozzle_data:/data
+    restart: unless-stopped
+
 volumes:
   mysql_data:
+  dozzle_data:
 
 secrets:
   tls_key:
