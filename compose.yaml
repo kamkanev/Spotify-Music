@@ -7,12 +7,17 @@ services:
       NODE_ENV: production
       SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID:?Set SPOTIFY_CLIENT_ID in .env}
       SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET:?Set SPOTIFY_CLIENT_SECRET in .env}
-      SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI:-http://127.0.0.1:5050/callback}
+      SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI:-https://127.0.0.1:5050/callback}
+      TLS_KEY_PATH: /run/secrets/tls_key
+      TLS_CERT_PATH: /run/secrets/tls_cert
       DB_HOST: db
       DB_PORT: "3306"
       DB_NAME: music
       DB_USER: music_app
       DB_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+    secrets:
+      - tls_key
+      - tls_cert
     depends_on:
       db:
         condition: service_healthy
@@ -39,3 +44,9 @@ services:
 
 volumes:
   mysql_data:
+
+secrets:
+  tls_key:
+    file: ./create-cert-key.pem
+  tls_cert:
+    file: ./create-cert.pem

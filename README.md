@@ -26,8 +26,39 @@ files preserved in the `mysql_data` Docker volume.
    docker compose up --build -d
    ```
 
-Open http://127.0.0.1:5050. Register
-`http://127.0.0.1:5050/callback` in your Spotify app settings.
+Before starting, provide `create-cert-key.pem` and `create-cert.pem` in the project
+root as described below. Open https://127.0.0.1:5050. Register
+`https://127.0.0.1:5050/callback` in your Spotify app settings and use the same URI
+in `.env`.
+
+### Local HTTPS
+
+The server starts with `https.createServer(signOptions, app).listen(...)`.
+`signOptions` contains the PEM private key and server certificate. The files are
+loaded only when starting the server, so importing `createApp` in tests does not
+require certificates. Docker Compose mounts them under `/run/secrets`; they are
+excluded from Git and the Docker build context. The CA private key is not used by
+the server and is not mounted into the container.
+
+The certificate must include the hostname/IP you open in its Subject Alternative
+Names. A certificate for `create-cert` alone does not cover `127.0.0.1` or
+`localhost`. With mkcert installed, generate a local certificate for these names:
+
+```sh
+mkcert -install
+mkcert -cert-file create-cert.pem -key-file create-cert-key.pem localhost 127.0.0.1 ::1
+```
+
+`mkcert -install` installs a local development CA in the host's trust stores;
+other devices need to trust that CA separately. Keep the CA private key private.
+The server certificate is signed by that local CA, rather than a public CA.
+When bind-mounted into Docker, the private key must be readable by the container's
+`node` user (UID 1000 on the supplied image). Keep restrictive host permissions;
+on Linux the file's owner should match that user. `TLS_KEY_PATH` and
+`TLS_CERT_PATH` can override the paths when running Node.js directly.
+
+After updating certificates or code, run `docker compose up --build -d` and open
+the HTTPS URL. The same port 5050 now serves HTTPS; it does not also serve HTTP.
 
 Compose waits for MySQL to accept connections before starting the application.
 MySQL initializes the `music` database from `db.sql` only when its data volume is

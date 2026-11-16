@@ -1,4 +1,5 @@
 //SERVER SETUP
+const https = require('https');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
@@ -73,7 +74,13 @@ function createApp({pool = db, api = new SpotifyWebApi({
 if (require.main === module) {
     const app = createApp();
     const port = Number(process.env.PORT || 5050);
-    app.listen(port, () => console.log(`Server is running on port ${port}`));
+    const signOptions = {
+        key: fs.readFileSync(process.env.TLS_KEY_PATH || path.join(__dirname, 'create-cert-key.pem')),
+        cert: fs.readFileSync(process.env.TLS_CERT_PATH || path.join(__dirname, 'create-cert.pem'))
+    };
+    https.createServer(signOptions, app).listen(port, () => {
+        console.log(`HTTPS server is running at https://127.0.0.1:${port}`);
+    });
 }
 
 module.exports = {createApp};

@@ -25,6 +25,8 @@
     "bootstrap": "^5.3.8",
     "ejs": "^7.0.2",
     "express": "^5.3.0",
+    "https": "^1.0.0",
+    "mkcert": "^3.2.0",
     "mysql2": "^3.24.6",
     "spotify-api.js": "^9.2.5",
     "spotify-web-api-node": "^5.0.2",
